@@ -10,6 +10,11 @@ const RolesPersona = sequelize.define('RolesPersona', {
   comentarios: DataTypes.TEXT,
   id_persona: DataTypes.INTEGER,
   id_rol: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = RolesPersona;

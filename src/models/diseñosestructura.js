@@ -9,6 +9,11 @@ const DiseñosEstructura = sequelize.define('DiseñosEstructura', {
   },
   id_estructura: DataTypes.INTEGER,
   id_diseño: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = DiseñosEstructura;

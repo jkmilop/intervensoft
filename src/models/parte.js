@@ -9,6 +9,11 @@ const Parte = sequelize.define('Parte', {
   },
   nombre: DataTypes.STRING,
   dimensiones: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Parte;

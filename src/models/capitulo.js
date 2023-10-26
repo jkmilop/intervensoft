@@ -10,6 +10,13 @@ const Capitulo = sequelize.define('Capitulo', {
   capitulo: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
   id_titulo: DataTypes.INTEGER,
-});
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
+}
+
+);
 
 module.exports = Capitulo;

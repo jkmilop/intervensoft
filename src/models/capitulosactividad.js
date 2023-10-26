@@ -10,6 +10,11 @@ const CapitulosActividad = sequelize.define('CapitulosActividad', {
   descripcion: DataTypes.TEXT,
   id_capitulo: DataTypes.INTEGER,
   id_actividad: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = CapitulosActividad;

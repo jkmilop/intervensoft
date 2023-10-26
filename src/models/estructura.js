@@ -10,6 +10,11 @@ const Estructura = sequelize.define('Estructura', {
   id_conjunto: DataTypes.INTEGER,
   estructura: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Estructura;

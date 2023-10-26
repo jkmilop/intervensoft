@@ -9,6 +9,11 @@ const Etapa = sequelize.define('Etapa', {
   },
   nombre: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Etapa;

@@ -9,6 +9,12 @@ const Actividad = sequelize.define('Actividad', {
   },
   nombre: DataTypes.STRING,
   id_etapa: DataTypes.INTEGER,
-});
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
+}
+);
 
 module.exports = Actividad;

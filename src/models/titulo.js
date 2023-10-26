@@ -11,6 +11,11 @@ const Titulo = sequelize.define('Titulo', {
   },
   letra: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Titulo;

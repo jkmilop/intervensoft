@@ -15,6 +15,11 @@ const Seguimiento = sequelize.define('Seguimiento', {
   id_involucrados: DataTypes.INTEGER,
   estado: DataTypes.STRING, // Cambiado a STRING
   certificado: DataTypes.STRING, // Cambiado a STRING
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Seguimiento;

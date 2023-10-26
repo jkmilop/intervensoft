@@ -9,6 +9,11 @@ const Involucrados = sequelize.define('Involucrados', {
   },
   comentarios: DataTypes.TEXT,
   id_involucrado: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Involucrados;

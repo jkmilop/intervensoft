@@ -10,6 +10,11 @@ const Proyecto = sequelize.define('Proyecto', {
   nombre: DataTypes.STRING,
   id_encargado: DataTypes.INTEGER,
   direccion: DataTypes.STRING,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Proyecto;

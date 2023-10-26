@@ -9,6 +9,11 @@ const Diseño = sequelize.define('Diseño', {
   },
   tipo_diseño: DataTypes.STRING,
   descripcion_diseño: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Diseño;

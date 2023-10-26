@@ -1,6 +1,6 @@
 'use strict';
 const app = require('./app.js');
-const {   Titulo,
+const { Titulo,
   Responsabilidad,
   Empresa,
   Rol,
@@ -18,12 +18,12 @@ const {   Titulo,
   CapitulosActividad,
   Involucrados,
   Seguimiento,
- }= require('./associations.js');
+} = require('./associations.js');
 const sequelize = require('./database/database.js');
 
 async function main() {
   try {
-    await sequelize.sync({force: true });
+    await sequelize.sync({ force: true });
     app.listen(4000);
     console.log('Server is running on port 4000');
   } catch (error) {

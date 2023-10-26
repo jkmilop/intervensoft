@@ -12,6 +12,11 @@ const Persona = sequelize.define('Persona', {
   telefono: DataTypes.BIGINT,
   id_empresa: DataTypes.INTEGER,
   id_responsabilidad: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Persona;

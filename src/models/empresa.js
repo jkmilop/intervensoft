@@ -9,6 +9,11 @@ const Empresa = sequelize.define('Empresa', {
   },
   nombre: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = Empresa;

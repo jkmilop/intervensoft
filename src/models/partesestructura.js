@@ -10,6 +10,11 @@ const PartesEstructura = sequelize.define('PartesEstructura', {
   descripcion: DataTypes.TEXT,
   id_estructura: DataTypes.INTEGER,
   id_parte: DataTypes.INTEGER,
+},
+{
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
 });
 
 module.exports = PartesEstructura;
