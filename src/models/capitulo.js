@@ -7,16 +7,15 @@ const Capitulo = sequelize.define('Capitulo', {
     primaryKey: true,
     autoIncrement: true,
   },
-  capitulo: DataTypes.STRING,
-  descripcion: DataTypes.TEXT,
   id_titulo: DataTypes.INTEGER,
+  indice: DataTypes.STRING,
+  capitulo: DataTypes.STRING,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
 }
-
 );
 
 module.exports = Capitulo;

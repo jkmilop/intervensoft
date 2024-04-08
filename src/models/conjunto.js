@@ -10,11 +10,13 @@ const Conjunto = sequelize.define('Conjunto', {
   nombre: DataTypes.STRING,
   id_residente_encargado: DataTypes.INTEGER,
   id_proyecto: DataTypes.INTEGER,
+  id_vivienda: DataTypes.INTEGER,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Conjunto;

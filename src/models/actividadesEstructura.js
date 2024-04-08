@@ -1,25 +1,25 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const Seguimiento = sequelize.define('Seguimiento', {
+const ActividadesEstructura = sequelize.define('ActividadesEstructura', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  descripcion: DataTypes.TEXT,
-  id_estructura: DataTypes.INTEGER,
   id_actividad: DataTypes.INTEGER,
+  id_estructura: DataTypes.INTEGER,
+  descripcion: DataTypes.TEXT,
   fecha_inicio: DataTypes.DATE,
   fecha_fin: DataTypes.DATE,
-  id_involucrados: DataTypes.INTEGER,
-  estado: DataTypes.STRING, // Cambiado a STRING
-  certificado: DataTypes.STRING, // Cambiado a STRING
+  estado: DataTypes.INTEGER,
+  certificado: DataTypes.INTEGER,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
-module.exports = Seguimiento;
+module.exports = ActividadesEstructura;

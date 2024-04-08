@@ -7,13 +7,14 @@ const Rol = sequelize.define('Rol', {
     primaryKey: true,
     autoIncrement: true,
   },
-  rol: DataTypes.STRING,
+  nombre: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Rol;

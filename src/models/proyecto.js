@@ -8,13 +8,14 @@ const Proyecto = sequelize.define('Proyecto', {
     autoIncrement: true,
   },
   nombre: DataTypes.STRING,
-  id_encargado: DataTypes.INTEGER,
   direccion: DataTypes.STRING,
+  id_ciudad: DataTypes.INTEGER,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Proyecto;

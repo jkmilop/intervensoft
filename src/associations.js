@@ -1,57 +1,71 @@
 const Titulo = require('./models/titulo.js');
-const Responsabilidad = require('./models/responsabilidad.js');
+const Capitulo = require('./models/capitulo.js');
+const Ciudad = require('./models/ciudad.js');
+const Proyecto = require('./models/proyecto.js');
+const TipoEstructura = require('./models/tipoEstructura.js');
+const UbicacionEstructura = require('./models/ubicacionEstructura.js');
+const TipoVivienda = require('./models/tipoVivienda.js');
+const MaterialConstruccion = require('./models/materialConstruccion.js');
 const Empresa = require('./models/empresa.js');
 const Rol = require('./models/rol.js');
 const Persona = require('./models/persona.js');
-const Conjunto = require('./models/conjunto.js');
-const Proyecto = require('./models/proyecto.js');
-const Estructura = require('./models/estructura.js');
-const Etapa = require('./models/etapa.js');
+const TipoDiseño = require('./models/tipoDiseño.js');
 const Diseño = require('./models/diseño.js');
+const Conjunto = require('./models/conjunto.js');
+const Estructura = require('./models/estructura.js');
+const Zona = require('./models/zona.js');
+const ZonaEstructura = require('./models/zonaEstructura.js');
+const MaterialesEstructura = require('./models/materialesEstructura.js');
+const Etapa = require('./models/etapa.js');
 const Actividad = require('./models/actividad.js');
-const Capitulo = require('./models/capitulo.js');
-const PartesEstructura = require('./models/partesestructura.js');
-const DiseñosEstructura = require('./models/diseñosestructura.js');
-const RolesPersona = require('./models/rolespersona.js');
-const CapitulosActividad = require('./models/capitulosactividad.js');
-const Involucrados = require('./models/involucrados.js');
-const Seguimiento = require('./models/seguimiento.js');
+const ActividadesEstructura = require('./models/actividadesEstructura.js');
+const DiseñosEstructura = require('./models/diseñosEstructura.js');
+const Reporte = require('./models/reporte.js');
+const EstructurasReporte = require('./models/estructurasReporte.js');
+const TipoActividad = require('./models/tipoActividad.js'); // Added TipoActividad model
 
 // Asociaciones
 Persona.belongsTo(Empresa, { foreignKey: 'id_empresa', targetKey: 'id' });
-Persona.belongsTo(Responsabilidad, { foreignKey: 'id_responsabilidad', targetKey: 'id' });
+Persona.belongsTo(Rol, { foreignKey: 'id_rol', targetKey: 'id' });
 Conjunto.belongsTo(Persona, { foreignKey: 'id_residente_encargado', targetKey: 'id' });
 Conjunto.belongsTo(Proyecto, { foreignKey: 'id_proyecto', targetKey: 'id' });
 Estructura.belongsTo(Conjunto, { foreignKey: 'id_conjunto', targetKey: 'id' });
-Actividad.belongsTo(Etapa, { foreignKey: 'id_etapa', targetKey: 'id' });
+Diseño.belongsTo(TipoDiseño, { foreignKey: 'tipo_diseño', targetKey: 'id' });
+ZonaEstructura.belongsTo(Zona, { foreignKey: 'id_zona', targetKey: 'id' });
+ZonaEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
+MaterialesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
+MaterialesEstructura.belongsTo(MaterialConstruccion, { foreignKey: 'id_material_construccion', targetKey: 'id' });
+ActividadesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
+ActividadesEstructura.belongsTo(Actividad, { foreignKey: 'id_actividad', targetKey: 'id' });
 DiseñosEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
 DiseñosEstructura.belongsTo(Diseño, { foreignKey: 'id_diseño', targetKey: 'id' });
-RolesPersona.belongsTo(Persona, { foreignKey: 'id_persona', targetKey: 'id' });
-RolesPersona.belongsTo(Rol, { foreignKey: 'id_rol', targetKey: 'id' });
-CapitulosActividad.belongsTo(Capitulo, { foreignKey: 'id_capitulo', targetKey: 'id' });
-CapitulosActividad.belongsTo(Actividad, { foreignKey: 'id_actividad', targetKey: 'id' });
-Involucrados.belongsTo(Persona, { foreignKey: 'id_involucrado', targetKey: 'id' });
-Seguimiento.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
-Seguimiento.belongsTo(Actividad, { foreignKey: 'id_actividad', targetKey: 'id' });
-Seguimiento.belongsTo(Involucrados, { foreignKey: 'id_involucrados', targetKey: 'id' });
+EstructurasReporte.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
+EstructurasReporte.belongsTo(Reporte, { foreignKey: 'id_reporte', targetKey: 'id' });
 
 module.exports = {
   Titulo,
-  Responsabilidad,
+  Capitulo,
+  Ciudad,
+  Proyecto,
+  TipoEstructura,
+  UbicacionEstructura,
+  TipoVivienda,
+  MaterialConstruccion,
   Empresa,
   Rol,
   Persona,
-  Conjunto,
-  Proyecto,
-  Estructura,
-  Etapa,
+  TipoDiseño,
   Diseño,
+  Conjunto,
+  Estructura,
+  Zona,
+  ZonaEstructura,
+  MaterialesEstructura,
+  Etapa,
   Actividad,
-  Capitulo,
-  PartesEstructura,
+  ActividadesEstructura,
   DiseñosEstructura,
-  RolesPersona,
-  CapitulosActividad,
-  Involucrados,
-  Seguimiento,
+  Reporte,
+  EstructurasReporte,
+  TipoActividad, // Added TipoActividad model
 };

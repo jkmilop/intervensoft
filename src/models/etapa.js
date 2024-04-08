@@ -14,7 +14,7 @@ const Etapa = sequelize.define('Etapa', {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Etapa;
-

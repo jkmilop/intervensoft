@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize(
   "intervensoft",
-  "",
-  "",
+  "cwng",
+  "cwng",
   {
     host: "localhost",
     dialect: "postgres",

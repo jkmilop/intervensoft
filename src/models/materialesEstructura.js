@@ -1,16 +1,14 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const Estructura = sequelize.define('Estructura', {
+const MaterialesEstructura = sequelize.define('MaterialesEstructura', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  id_conjunto: DataTypes.INTEGER,
-  id_ubicacion_estructura: DataTypes.INTEGER,
-  id_tipo_estructura: DataTypes.INTEGER,
-  nombre: DataTypes.STRING,
+  id_material_construccion: DataTypes.INTEGER,
+  id_estructura: DataTypes.INTEGER,
   descripcion: DataTypes.TEXT,
 },
 {
@@ -20,4 +18,4 @@ const Estructura = sequelize.define('Estructura', {
 }
 );
 
-module.exports = Estructura;
+module.exports = MaterialesEstructura;

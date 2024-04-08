@@ -7,13 +7,14 @@ const Diseño = sequelize.define('Diseño', {
     primaryKey: true,
     autoIncrement: true,
   },
-  tipo_diseño: DataTypes.STRING,
+  tipo_diseño: DataTypes.INTEGER,
   descripcion_diseño: DataTypes.TEXT,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Diseño;

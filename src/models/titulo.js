@@ -1,5 +1,3 @@
-'use strict';
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
@@ -9,13 +7,14 @@ const Titulo = sequelize.define('Titulo', {
     primaryKey: true,
     autoIncrement: true,
   },
-  letra: DataTypes.STRING,
-  descripcion: DataTypes.TEXT,
+  indice: DataTypes.STRING,
+  titulo: DataTypes.STRING,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Titulo;

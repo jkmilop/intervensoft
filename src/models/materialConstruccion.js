@@ -1,20 +1,21 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const RolesPersona = sequelize.define('RolesPersona', {
+const MaterialConstruccion = sequelize.define('MaterialConstruccion', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  comentarios: DataTypes.TEXT,
-  id_persona: DataTypes.INTEGER,
-  id_rol: DataTypes.INTEGER,
+  nombre: DataTypes.STRING,
+  referencia: DataTypes.STRING,
+  dimensiones: DataTypes.STRING,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
-module.exports = RolesPersona;
+module.exports = MaterialConstruccion;

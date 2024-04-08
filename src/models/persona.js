@@ -8,15 +8,16 @@ const Persona = sequelize.define('Persona', {
     autoIncrement: true,
   },
   nombre: DataTypes.STRING,
-  cedula: DataTypes.BIGINT,
-  telefono: DataTypes.BIGINT,
+  cedula: DataTypes.INTEGER,
   id_empresa: DataTypes.INTEGER,
-  id_responsabilidad: DataTypes.INTEGER,
+  telefono: DataTypes.INTEGER,
+  id_rol: DataTypes.INTEGER,
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = Persona;

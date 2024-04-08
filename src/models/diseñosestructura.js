@@ -14,6 +14,7 @@ const DiseñosEstructura = sequelize.define('DiseñosEstructura', {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-});
+}
+);
 
 module.exports = DiseñosEstructura;
