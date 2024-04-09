@@ -7,13 +7,15 @@ const Ciudad = sequelize.define('Ciudad', {
     primaryKey: true,
     autoIncrement: true,
   },
-  nombre: DataTypes.STRING,
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,  
+  },
 },
 {
   sequelize,
   timestamps: false,
   freezeTableName: true,
-}
-);
+});
 
 module.exports = Ciudad;

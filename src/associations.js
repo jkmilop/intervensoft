@@ -67,5 +67,5 @@ module.exports = {
   DiseñosEstructura,
   Reporte,
   EstructurasReporte,
-  TipoActividad, // Added TipoActividad model
+  TipoActividad,  
 };
