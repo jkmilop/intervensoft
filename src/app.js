@@ -22,11 +22,11 @@ const materialesEstructuraRoutes = require('./routes/materialesEstructura.routes
 const etapaRoutes = require('./routes/etapa.routes.js');
 const actividadRoutes = require('./routes/actividad.routes.js');
 const actividadesEstructuraRoutes = require('./routes/actividadesEstructura.routes.js');
-const diseñosEstructuraRoutes = require('./routes/diseñosEstructura.routes.js');
+const diseñoEstructuraRoutes = require('./routes/diseñoEstructura.routes.js');
 const reporteRoutes = require('./routes/reporte.routes.js');
 const estructurasReporteRoutes = require('./routes/estructurasReporte.routes.js');
 const tipoActividadRoutes = require('./routes/tipoActividad.routes.js');
-const usuarioRoutes =  require('./routes/tipoActividad.routes.js');
+const usuarioRoutes =  require('./routes/usuario.routes.js');
 
 app.use(cors());
 app.use(express.json());
@@ -51,7 +51,7 @@ app.use('/materialesEstructura', materialesEstructuraRoutes);
 app.use('/etapa', etapaRoutes);
 app.use('/actividad', actividadRoutes);
 app.use('/actividadesEstructura', actividadesEstructuraRoutes);
-app.use('/diseñosEstructura', diseñosEstructuraRoutes);
+app.use('/diseñoEstructura', diseñoEstructuraRoutes);
 app.use('/reporte', reporteRoutes);
 app.use('/estructurasReporte', estructurasReporteRoutes);
 app.use('/tipoActividad', tipoActividadRoutes);

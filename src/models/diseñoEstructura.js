@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const DiseñosEstructura = sequelize.define('DiseñosEstructura', {
+const DiseñoEstructura = sequelize.define('DiseñoEstructura', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -17,4 +17,4 @@ const DiseñosEstructura = sequelize.define('DiseñosEstructura', {
 }
 );
 
-module.exports = DiseñosEstructura;
+module.exports = DiseñoEstructura;

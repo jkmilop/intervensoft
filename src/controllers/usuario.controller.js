@@ -1,18 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-const Usuario = require('../models/usuario.js'); // Update the model import
-
-const handleError = (res, error) => {
-  console.error('Error:', error);
-  return res.status(500).json({ message: 'Internal Server Error' });
-};
-
+const handleError = require('../utils/errorHandler.js');
+const Usuario = require('../models/usuario.js');  
 const register = async (req, res) => {
-  const { usuario, contraseña, correo, rol } = req.body; // Update field names
-
+  const { usuario, contraseña, correo, rol } = req.body;  
   try {
-    if (!['Supervisor', 'Interventor/Operario', 'Coordinador', 'Administrador'].includes(rol)) {
+    if (!['Supervisor', 'Interventor', 'Coordinador', 'Administrador'].includes(rol)) {
       return res.status(400).json({ message: 'Invalid user role' });
     }
     const existingUser = await Usuario.findOne({ where: { usuario } });

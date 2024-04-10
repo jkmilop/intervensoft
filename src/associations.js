@@ -19,7 +19,7 @@ const MaterialesEstructura = require('./models/materialesEstructura.js');
 const Etapa = require('./models/etapa.js');
 const Actividad = require('./models/actividad.js');
 const ActividadesEstructura = require('./models/actividadesEstructura.js');
-const DiseñosEstructura = require('./models/diseñosEstructura.js');
+const DiseñoEstructura = require('./models/diseñoEstructura.js');
 const Reporte = require('./models/reporte.js');
 const EstructurasReporte = require('./models/estructurasReporte.js');
 const TipoActividad = require('./models/tipoActividad.js'); // Added TipoActividad model
@@ -37,8 +37,8 @@ MaterialesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', target
 MaterialesEstructura.belongsTo(MaterialConstruccion, { foreignKey: 'id_material_construccion', targetKey: 'id' });
 ActividadesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
 ActividadesEstructura.belongsTo(Actividad, { foreignKey: 'id_actividad', targetKey: 'id' });
-DiseñosEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
-DiseñosEstructura.belongsTo(Diseño, { foreignKey: 'id_diseño', targetKey: 'id' });
+DiseñoEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
+DiseñoEstructura.belongsTo(Diseño, { foreignKey: 'id_diseño', targetKey: 'id' });
 EstructurasReporte.belongsTo(Estructura, { foreignKey: 'id_estructura', targetKey: 'id' });
 EstructurasReporte.belongsTo(Reporte, { foreignKey: 'id_reporte', targetKey: 'id' });
 
@@ -64,7 +64,7 @@ module.exports = {
   Etapa,
   Actividad,
   ActividadesEstructura,
-  DiseñosEstructura,
+  DiseñoEstructura,
   Reporte,
   EstructurasReporte,
   TipoActividad,  
