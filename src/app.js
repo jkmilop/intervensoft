@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+app.use((req, res, next) => {
+    req.url = decodeURIComponent(req.url);
+    next();
+  });
 const ciudadRoutes = require('./routes/ciudad.routes.js');
 const tituloRoutes = require('./routes/titulo.routes.js');
 const capituloRoutes = require('./routes/capitulo.routes.js');

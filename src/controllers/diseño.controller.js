@@ -1,15 +1,23 @@
 const Diseño = require('../models/diseño.js');
+const TipoDiseño = require('../models/tipoDiseño.js');
+
+const handleError = require('../utils/errorHandler.js');
+
 const {
   addRecord,
-  getRecord,
-  getRecords,
+  getRecordWithAssociations,
+  getRecordsWithAssociations ,
   updateRecord,
   deleteRecord,
 } = require('./crudController.js');
 
 const addDiseño = addRecord(Diseño);
-const getDiseño = getRecord(Diseño);
-const getDiseños = getRecords(Diseño);
+const getDiseño = getRecordWithAssociations(Diseño, [
+  { model: TipoDiseño, attributes: ['nombre'], as: 'tipo_diseño' },
+]);
+const getDiseños = getRecordsWithAssociations(Diseño, [
+  { model: TipoDiseño, attributes: ['nombre'], as: 'tipo_diseño' },
+]);
 const updateDiseño = updateRecord(Diseño);
 const deleteDiseño = deleteRecord(Diseño);
 

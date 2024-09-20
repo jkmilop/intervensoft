@@ -9,7 +9,7 @@ const Actividad = sequelize.define('Actividad', {
   },
   nombre: DataTypes.STRING,
   id_etapa: DataTypes.INTEGER,
-  id_capitulo: DataTypes.INTEGER,
+  id_tipo_actividad: DataTypes.INTEGER,
 },
 {
   sequelize,
