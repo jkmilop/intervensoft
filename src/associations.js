@@ -38,10 +38,18 @@ Rol.hasMany(Persona, { foreignKey: 'id_rol' });
 //Conjunto
 Conjunto.belongsTo(Persona, { foreignKey: 'id_residente_encargado', as: 'residente_encargado' });
 Conjunto.belongsTo(Proyecto, { foreignKey: 'id_proyecto', as: 'proyecto' });
+Conjunto.belongsTo(TipoVivienda, { foreignKey: 'id_vivienda', as: 'tipo_vivienda' });
+
 Persona.hasOne(Conjunto, { foreignKey: 'id_residente_encargado' });
 Proyecto.hasMany(Conjunto, { foreignKey: 'id_proyecto' });
 
+Proyecto.belongsTo(Ciudad, { foreignKey: 'id_ciudad', as: 'ciudad' });
+Ciudad.hasOne(Proyecto, { foreignKey: 'id_ciudad' });
+
 Estructura.belongsTo(Conjunto, { foreignKey: 'id_conjunto', as: 'conjunto' });
+Estructura.belongsTo(UbicacionEstructura, { foreignKey: 'id_ubicacion_estructura', as: 'ubicacion_estructura' });
+Estructura.belongsTo(TipoEstructura, { foreignKey: 'id_tipo_estructura', as: 'tipo_estructura' });
+
 Conjunto.hasMany(Estructura, { foreignKey: 'id_conjunto' });
 //Diseño
 
@@ -73,6 +81,15 @@ EstructurasReporte.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'est
 EstructurasReporte.belongsTo(Reporte, { foreignKey: 'id_reporte', as: 'reporte' });
 Estructura.hasMany(EstructurasReporte, { foreignKey: 'id_estructura' });
 Reporte.hasMany(EstructurasReporte, { foreignKey: 'id_reporte' });
+
+//Reporte
+Reporte.belongsTo(Persona, { foreignKey: 'id_interventor', as: 'interventor' });
+Reporte.belongsTo(Persona, { foreignKey: 'id_residente', as: 'residente' });
+Reporte.belongsTo(Persona, { foreignKey: 'id_contratista', as: 'contratista' });
+Persona.hasOne(Reporte, { foreignKey: 'id_interventor' });
+Persona.hasOne(Reporte, { foreignKey: 'id_residente' });
+Persona.hasOne(Reporte, { foreignKey: 'id_contratista' });
+
 
 module.exports = {
   Titulo,

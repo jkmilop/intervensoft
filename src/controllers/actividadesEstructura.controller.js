@@ -1,15 +1,26 @@
 const ActividadesEstructura = require('../models/actividadesEstructura.js');
+const Estructura = require('../models/estructura.js');
+const Actividad = require('../models/actividad.js');
+
 const {
   addRecord,
-  getRecord,
-  getRecords,
+  getRecordWithAssociations,
+  getRecordsWithAssociations,
   updateRecord,
   deleteRecord,
 } = require('./crudController.js');
 
 const addActividadesEstructura = addRecord(ActividadesEstructura);
-const getActividadesEstructura = getRecord(ActividadesEstructura);
-const getActividadesEstructuras = getRecords(ActividadesEstructura);
+const getActividadesEstructura = getRecordWithAssociations(ActividadesEstructura, [
+  { model: Estructura, attributes: ['nombre'], as: 'estructura' },
+  { model: Actividad, attributes: ['nombre'], as: 'actividad' },
+
+]);
+const getActividadesEstructuras = getRecordsWithAssociations(ActividadesEstructura, [
+  { model: Estructura, attributes: ['nombre'], as: 'estructura' },
+  { model: Actividad, attributes: ['nombre'], as: 'actividad' },
+
+]);
 const updateActividadesEstructura = updateRecord(ActividadesEstructura);
 const deleteActividadesEstructura = deleteRecord(ActividadesEstructura);
 

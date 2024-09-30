@@ -21,7 +21,7 @@ module.exports = {
     "descripcion": ""
   },
   {
-    "nombre": "Prueba",
+    "nombre": "Externo",
     "descripcion": ""
   }
 ], {
