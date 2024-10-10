@@ -1,120 +1,111 @@
-const Titulo = require('./models/titulo.js');
-const Capitulo = require('./models/capitulo.js');
-const Ciudad = require('./models/ciudad.js');
-const Proyecto = require('./models/proyecto.js');
-const TipoEstructura = require('./models/tipoEstructura.js');
-const UbicacionEstructura = require('./models/ubicacionEstructura.js');
-const TipoVivienda = require('./models/tipoVivienda.js');
-const MaterialConstruccion = require('./models/materialConstruccion.js');
-const Empresa = require('./models/empresa.js');
-const Rol = require('./models/rol.js');
-const Persona = require('./models/persona.js');
-const TipoDiseño = require('./models/tipoDiseño.js');
-const Diseño = require('./models/diseño.js');
-const Conjunto = require('./models/conjunto.js');
-const Estructura = require('./models/estructura.js');
-const Zona = require('./models/zona.js');
-const ZonaEstructura = require('./models/zonaEstructura.js');
-const MaterialesEstructura = require('./models/materialesEstructura.js');
-const Etapa = require('./models/etapa.js');
 const Actividad = require('./models/actividad.js');
-const ActividadesEstructura = require('./models/actividadesEstructura.js');
-const DiseñoEstructura = require('./models/diseñoEstructura.js');
-const Reporte = require('./models/reporte.js');
-const EstructurasReporte = require('./models/estructurasReporte.js');
-const TipoActividad = require('./models/tipoActividad.js'); // Added TipoActividad model
+const CTActividadesEstructura = require('./models/ctactividadesEstructura.js');
 
-// Asociaciones
-//Actividad
+const ActividadesEstructura = require('./models/actividadesEstructura.js');
+const Ciudad = require('./models/ciudad.js');
+const Conjunto = require('./models/conjunto.js');
+const Diseño = require('./models/diseño.js');
+const Empresa = require('./models/empresa.js');
+const Estado = require('./models/estado.js');
+const Etapa = require('./models/etapa.js');
+const Estructura = require('./models/estructura.js');
+const Persona = require('./models/persona.js');
+const Proyecto = require('./models/proyecto.js');
+const Reporte = require('./models/reporte.js');
+const Resultado = require('./models/resultado.js');
+const Rol = require('./models/rol.js');
+const Seccion = require('./models/seccion.js');
+const TipoActividad = require('./models/tipoActividad.js');
+const TipoEstructura = require('./models/tipoEstructura.js');
+const TipoEvaluacion = require('./models/tipoEvaluacion.js');
+const TipoVivienda = require('./models/tipoVivienda.js');
+const UbicacionEstructura = require('./models/ubicacionEstructura.js');
+
+// Actividad associations
 Actividad.belongsTo(Etapa, { foreignKey: 'id_etapa', as: 'etapa' });
 Actividad.belongsTo(TipoActividad, { foreignKey: 'id_tipo_actividad', as: 'tipo_actividad' });
+Actividad.belongsTo(Seccion, { foreignKey: 'id_seccion', as: 'seccion' });
 Etapa.hasMany(Actividad, { foreignKey: 'id_etapa' });
 TipoActividad.hasMany(Actividad, { foreignKey: 'id_tipo_actividad' });
-//Persona
+Seccion.hasMany(Actividad, { foreignKey: 'id_seccion' });
+
+// ActividadesEstructura associations
+ActividadesEstructura.belongsTo(Actividad, { foreignKey: 'id_actividad', as: 'actividad' });
+ActividadesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
+ActividadesEstructura.belongsTo(Resultado, { foreignKey: 'id_resultado', as: 'resultado' });
+Actividad.hasMany(ActividadesEstructura, { foreignKey: 'id_actividad' });
+Estructura.hasMany(ActividadesEstructura, { foreignKey: 'id_estructura' });
+Resultado.hasMany(ActividadesEstructura, { foreignKey: 'id_resultado' });
+
+CTActividadesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
+CTActividadesEstructura.belongsTo(Actividad, { foreignKey: 'id_actividad', as: 'actividad' });
+Estructura.hasMany(CTActividadesEstructura, { foreignKey: 'id_estructura' });
+Actividad.hasMany(CTActividadesEstructura, { foreignKey: 'id_actividad' });
+
+// Persona associations
 Persona.belongsTo(Empresa, { foreignKey: 'id_empresa', as: 'empresa' });
 Persona.belongsTo(Rol, { foreignKey: 'id_rol', as: 'rol' });
 Empresa.hasMany(Persona, { foreignKey: 'id_empresa' });
 Rol.hasMany(Persona, { foreignKey: 'id_rol' });
-//Conjunto
+
+// Conjunto associations
 Conjunto.belongsTo(Persona, { foreignKey: 'id_residente_encargado', as: 'residente_encargado' });
 Conjunto.belongsTo(Proyecto, { foreignKey: 'id_proyecto', as: 'proyecto' });
 Conjunto.belongsTo(TipoVivienda, { foreignKey: 'id_vivienda', as: 'tipo_vivienda' });
-
-Persona.hasOne(Conjunto, { foreignKey: 'id_residente_encargado' });
+Persona.hasMany(Conjunto, { foreignKey: 'id_residente_encargado' });
 Proyecto.hasMany(Conjunto, { foreignKey: 'id_proyecto' });
+TipoVivienda.hasMany(Conjunto, { foreignKey: 'id_vivienda' });
 
+// Proyecto associations
 Proyecto.belongsTo(Ciudad, { foreignKey: 'id_ciudad', as: 'ciudad' });
-Ciudad.hasOne(Proyecto, { foreignKey: 'id_ciudad' });
+Ciudad.hasMany(Proyecto, { foreignKey: 'id_ciudad' });
 
+// Estructura associations
 Estructura.belongsTo(Conjunto, { foreignKey: 'id_conjunto', as: 'conjunto' });
+Estructura.belongsTo(TipoEstructura, { foreignKey: 'id_tipo_casa', as: 'tipo_estructura' });
 Estructura.belongsTo(UbicacionEstructura, { foreignKey: 'id_ubicacion_estructura', as: 'ubicacion_estructura' });
-Estructura.belongsTo(TipoEstructura, { foreignKey: 'id_tipo_estructura', as: 'tipo_estructura' });
-
+Estructura.belongsTo(Diseño, { foreignKey: 'id_diseno', as: 'diseño' });
 Conjunto.hasMany(Estructura, { foreignKey: 'id_conjunto' });
-//Diseño
+TipoEstructura.hasMany(Estructura, { foreignKey: 'id_tipo_casa' });
+UbicacionEstructura.hasMany(Estructura, { foreignKey: 'id_ubicacion_estructura' });
+Diseño.hasMany(Estructura, { foreignKey: 'id_diseno' });
 
-Diseño.belongsTo(TipoDiseño, { foreignKey: 'id_tipo_diseño', as: 'tipo_diseño' });
-TipoDiseño.hasMany(Diseño, { foreignKey: 'id_tipo_diseño' });
-
-ZonaEstructura.belongsTo(Zona, { foreignKey: 'id_zona', as: 'zona' });
-ZonaEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
-Zona.hasMany(ZonaEstructura, { foreignKey: 'id_zona' });
-Estructura.hasMany(ZonaEstructura, { foreignKey: 'id_estructura' });
-
-
-MaterialesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
-MaterialesEstructura.belongsTo(MaterialConstruccion, { foreignKey: 'id_material_construccion', as: 'material_construccion' });
-Estructura.hasMany(MaterialesEstructura, { foreignKey: 'id_estructura' });
-MaterialConstruccion.hasMany(MaterialesEstructura, { foreignKey: 'id_material_construccion' });
-
-ActividadesEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
-ActividadesEstructura.belongsTo(Actividad, { foreignKey: 'id_actividad', as: 'actividad' });
-Estructura.hasMany(ActividadesEstructura, { foreignKey: 'id_estructura' });
-Actividad.hasMany(ActividadesEstructura, { foreignKey: 'id_actividad' });
-
-DiseñoEstructura.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
-DiseñoEstructura.belongsTo(Diseño, { foreignKey: 'id_diseño', as: 'diseño' });
-Estructura.hasMany(DiseñoEstructura, { foreignKey: 'id_estructura' });
-Diseño.hasMany(DiseñoEstructura, { foreignKey: 'id_diseño' });
-
-EstructurasReporte.belongsTo(Estructura, { foreignKey: 'id_estructura', as: 'estructura' });
-EstructurasReporte.belongsTo(Reporte, { foreignKey: 'id_reporte', as: 'reporte' });
-Estructura.hasMany(EstructurasReporte, { foreignKey: 'id_estructura' });
-Reporte.hasMany(EstructurasReporte, { foreignKey: 'id_reporte' });
-
-//Reporte
+// Reporte associations
 Reporte.belongsTo(Persona, { foreignKey: 'id_interventor', as: 'interventor' });
 Reporte.belongsTo(Persona, { foreignKey: 'id_residente', as: 'residente' });
 Reporte.belongsTo(Persona, { foreignKey: 'id_contratista', as: 'contratista' });
-Persona.hasOne(Reporte, { foreignKey: 'id_interventor' });
-Persona.hasOne(Reporte, { foreignKey: 'id_residente' });
-Persona.hasOne(Reporte, { foreignKey: 'id_contratista' });
+Reporte.belongsTo(ActividadesEstructura, { foreignKey: 'id_actividades_estructura', as: 'actividades_estructura' });
+Reporte.belongsTo(Estado, { foreignKey: 'id_estado', as: 'estado' });
+Persona.hasMany(Reporte, { foreignKey: 'id_interventor', as: 'reportes_interventor' });
+Persona.hasMany(Reporte, { foreignKey: 'id_residente', as: 'reportes_residente' });
+Persona.hasMany(Reporte, { foreignKey: 'id_contratista', as: 'reportes_contratista' });
+ActividadesEstructura.hasMany(Reporte, { foreignKey: 'id_actividades_estructura' });
+Estado.hasMany(Reporte, { foreignKey: 'id_estado' });
 
+// TipoActividad associations
+TipoActividad.belongsTo(TipoEvaluacion, { foreignKey: 'id_tipo_evaluacion', as: 'tipo_evaluacion' });
+TipoEvaluacion.hasMany(TipoActividad, { foreignKey: 'id_tipo_evaluacion' });
 
 module.exports = {
-  Titulo,
-  Capitulo,
-  Ciudad,
-  Proyecto,
-  TipoEstructura,
-  UbicacionEstructura,
-  TipoVivienda,
-  MaterialConstruccion,
-  Empresa,
-  Rol,
-  Persona,
-  TipoDiseño,
-  Diseño,
-  Conjunto,
-  Estructura,
-  Zona,
-  ZonaEstructura,
-  MaterialesEstructura,
-  Etapa,
   Actividad,
   ActividadesEstructura,
-  DiseñoEstructura,
+  Ciudad,
+  Conjunto,
+  CTActividadesEstructura,
+  Diseño,
+  Empresa,
+  Estado,
+  Etapa,
+  Estructura,
+  Persona,
+  Proyecto,
   Reporte,
-  EstructurasReporte,
-  TipoActividad,  
+  Resultado,
+  Rol,
+  Seccion,
+  TipoActividad,
+  TipoEstructura,
+  TipoEvaluacion,
+  TipoVivienda,
+  UbicacionEstructura
 };

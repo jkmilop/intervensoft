@@ -7,10 +7,29 @@ const Reporte = sequelize.define('Reporte', {
     primaryKey: true,
     autoIncrement: true,
   },
-  id_interventor: DataTypes.INTEGER,
-  id_residente: DataTypes.INTEGER,
-  id_contratista: DataTypes.INTEGER,
-  descripcion_reporte: DataTypes.TEXT,
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  descripcion: {
+    type: DataTypes.TEXT,
+  },
+  id_interventor: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_residente: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_contratista: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_actividades_estructura: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
 },
 {
   sequelize,

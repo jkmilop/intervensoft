@@ -7,9 +7,22 @@ const Actividad = sequelize.define('Actividad', {
     primaryKey: true,
     autoIncrement: true,
   },
-  nombre: DataTypes.STRING,
-  id_etapa: DataTypes.INTEGER,
-  id_tipo_actividad: DataTypes.INTEGER,
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  id_etapa: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_tipo_actividad: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_seccion: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
 },
 {
   sequelize,

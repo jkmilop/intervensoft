@@ -1,15 +1,18 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const Capitulo = sequelize.define('Capitulo', {
+const Resultado = sequelize.define('resultado', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
+    autoIncrement: true,  },
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
-  id_titulo: DataTypes.INTEGER,
-  indice: DataTypes.STRING,
-  capitulo: DataTypes.STRING,
+  descripcion: {
+    type: DataTypes.TEXT,
+  },
 },
 {
   sequelize,
@@ -18,4 +21,4 @@ const Capitulo = sequelize.define('Capitulo', {
 }
 );
 
-module.exports = Capitulo;
+module.exports = Resultado;

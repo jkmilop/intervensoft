@@ -1,19 +1,26 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const ActividadesEstructura = sequelize.define('ActividadesEstructura', {
+const ActividadesEstructura = sequelize.define('actividades_estructura', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true,
+    autoIncrement: true,  },
+  descripcion: {
+    type: DataTypes.TEXT,
   },
-  id_actividad: DataTypes.INTEGER,
-  id_estructura: DataTypes.INTEGER,
-  descripcion: DataTypes.TEXT,
-  fecha_inicio: DataTypes.DATE,
-  fecha_fin: DataTypes.DATE,
-  estado: DataTypes.INTEGER,
-  certificado: DataTypes.INTEGER,
+  id_actividad: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_estructura: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  id_resultado: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
 },
 {
   sequelize,

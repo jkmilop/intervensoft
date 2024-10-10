@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const Zona = sequelize.define('Zona', {
+const Seccion = sequelize.define('Seccion', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -16,5 +16,5 @@ const Zona = sequelize.define('Zona', {
 }
 );
 
-module.exports = Zona;
+module.exports = Seccion;
 
