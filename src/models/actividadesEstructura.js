@@ -11,19 +11,19 @@ const ActividadesEstructura = sequelize.define('ActividadesEstructura', {
   },
   id_actividad: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   id_estructura: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   id_estado: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   id_reporte: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   fecha_inicio: DataTypes.DATE,
   fecha_fin: DataTypes.DATE,

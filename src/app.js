@@ -11,6 +11,7 @@ const ctactividadesEstructuraRoutes = require('./routes/ctactividadesEstructura.
 const ciudadRoutes = require('./routes/ciudad.routes.js');
 const conjuntoRoutes = require('./routes/conjunto.routes.js');
 const diseñoRoutes = require('./routes/diseño.routes.js');
+const dashboardRoutes = require('./routes/dashboard.routes.js');
 const empresaRoutes = require('./routes/empresa.routes.js');
 const etapaRoutes = require('./routes/etapa.routes.js');
 const estadoRoutes = require('./routes/estado.routes.js');
@@ -34,6 +35,7 @@ app.use('/actividades-estructura', actividadesEstructuraRoutes);
 app.use('/ctactividades-estructura', ctactividadesEstructuraRoutes);
 app.use('/ciudad', ciudadRoutes);
 app.use('/conjunto', conjuntoRoutes);
+app.use('/dashboard', dashboardRoutes);
 app.use('/diseño', diseñoRoutes);
 app.use('/empresa', empresaRoutes);
 app.use('/etapa', etapaRoutes);

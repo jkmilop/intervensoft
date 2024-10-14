@@ -5,15 +5,15 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Resultado', [
   {
-    "nombre": "",
+    "nombre": "Aprobado",
     "descripcion": "resultado_descripcion_1"
   },
   {
-    "nombre": "",
+    "nombre": "Reprobado",
     "descripcion": "resultado_descripcion_2"
   },
   {
-    "nombre": "",
+    "nombre": "Pendiente",
     "descripcion": "resultado_descripcion_3"
   },
   {

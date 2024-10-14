@@ -9,27 +9,31 @@ const Estructura = sequelize.define('Estructura', {
   },
   id_conjunto: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
   id_diseño: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   },
 
   id_tipo_estructura: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
+  },
+  id_estado: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   nombre: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   descripcion: {
     type: DataTypes.TEXT,
   },
   id_ubicacion_estructura: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   }
 },
 {

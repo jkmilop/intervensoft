@@ -5,64 +5,25 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Ciudad', [
   {
-    "nombre": ""
+    "nombre": "Cali"
   },
   {
-    "nombre": ""
+    "nombre": "Palmira"
   },
   {
-    "nombre": ""
+    "nombre": "Buga"
   },
   {
-    "nombre": ""
+    "nombre": "Yumbo"
   },
   {
-    "nombre": ""
+    "nombre": "Buenaventura"
   },
   {
-    "nombre": ""
+    "nombre": "Rozo"
   },
   {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
-  },
-  {
-    "nombre": ""
+    "nombre": "Cartago"
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

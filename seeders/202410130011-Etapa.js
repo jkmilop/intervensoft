@@ -5,84 +5,40 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Etapa', [
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_1"
+    "nombre": "Movimiento de tierra",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_2"
+    "nombre": "Instalación de red sanitaria de cimentación",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_3"
+    "nombre": "Losa de cimentación",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_4"
+    "nombre": "Muros de mampostería primer piso",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_5"
+    "nombre": "Vigas de amarre de primer piso",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_6"
+    "nombre": "Losa de entrepiso",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_7"
+    "nombre": "Muros de mampostería segundo piso",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_8"
+    "nombre": "Vigas de amarre de segundo piso",
+    "descripcion": ""
   },
   {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_9"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_10"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_11"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_12"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_13"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_14"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_15"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_16"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_17"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_18"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_19"
-  },
-  {
-    "nombre": "",
-    "descripcion": "etapa_descripcion_20"
+    "nombre": "Losa de cubierta",
+    "descripcion": ""
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

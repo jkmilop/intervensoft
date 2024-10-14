@@ -8,7 +8,7 @@ const CTActividadesEstructura = sequelize.define('CTActividadesEstructura', {
     autoIncrement: true,
   },
   id_actividad: DataTypes.INTEGER,
-  id_estructura: DataTypes.INTEGER,
+  id_tipo_estructura: DataTypes.INTEGER,
   descripcion: DataTypes.TEXT,
 },
 {

@@ -5,64 +5,91 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('TipoEstructura', [
   {
-    "nombre": ""
+    "nombre": "Casa"
   },
   {
-    "nombre": ""
+    "nombre": "Apartamento"
   },
   {
-    "nombre": ""
+    "nombre": "Planta de Tratamiento de Aguas Residuales"
   },
   {
-    "nombre": ""
+    "nombre": "Elevador"
   },
   {
-    "nombre": ""
+    "nombre": "Gimnasio"
   },
   {
-    "nombre": ""
+    "nombre": "Piscina"
   },
   {
-    "nombre": ""
+    "nombre": "Salón Social"
   },
   {
-    "nombre": ""
+    "nombre": "Zonas Verdes"
   },
   {
-    "nombre": ""
+    "nombre": "Escalera Torre"
   },
   {
-    "nombre": ""
+    "nombre": "Senderos Peatonales"
   },
   {
-    "nombre": ""
+    "nombre": "Portería"
   },
   {
-    "nombre": ""
+    "nombre": "Subestación Electrica"
   },
   {
-    "nombre": ""
+    "nombre": "Parque"
   },
   {
-    "nombre": ""
+    "nombre": "Vía"
   },
   {
-    "nombre": ""
+    "nombre": "Glorieta"
   },
   {
-    "nombre": ""
+    "nombre": "Andenes"
   },
   {
-    "nombre": ""
+    "nombre": "Estacionamiento Visitantes"
   },
   {
-    "nombre": ""
+    "nombre": "Edificio Administrativo"
   },
   {
-    "nombre": ""
+    "nombre": "Baño Turco"
   },
   {
-    "nombre": ""
+    "nombre": "Sauna"
+  },
+  {
+    "nombre": "Red de Gas"
+  },
+  {
+    "nombre": "Red de Alumbrado público"
+  },
+  {
+    "nombre": "Red de baja tensión"
+  },
+  {
+    "nombre": "Red de acueducto"
+  },
+  {
+    "nombre": "Red de alcantarillado sanitario"
+  },
+  {
+    "nombre": "Red de alcantarillado aguas lluvias"
+  },
+  {
+    "nombre": "Telefonía"
+  },
+  {
+    "nombre": "Internet"
+  },
+  {
+    "nombre": "Jacuzzi"
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

@@ -1,5 +1,5 @@
 const CTActividadesEstructura = require('../models/ctactividadesEstructura.js');
-const Estructura = require('../models/estructura.js');
+const TipoEstructura = require('../models/tipoEstructura.js');
 const Actividad = require('../models/actividad.js');
 
 const {
@@ -12,12 +12,12 @@ const {
 
 const addCTActividadesEstructura = addRecord(CTActividadesEstructura);
 const getCTActividadesEstructura = getRecordWithAssociations(CTActividadesEstructura, [
-  { model: Estructura, attributes: ['nombre'], as: 'estructura' },
+  { model: TipoEstructura, attributes: ['nombre'], as: 'tipo_estructura' },
   { model: Actividad, attributes: ['nombre'], as: 'actividad' },
 
 ]);
 const getCTActividadesEstructuras = getRecordsWithAssociations(CTActividadesEstructura, [
-  { model: Estructura, attributes: ['nombre'], as: 'estructura' },
+  { model: TipoEstructura, attributes: ['nombre'], as: 'tipo_estructura' },
   { model: Actividad, attributes: ['nombre'], as: 'actividad' },
 
 ]);
