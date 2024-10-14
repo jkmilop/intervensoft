@@ -7,6 +7,7 @@ const Diseño = sequelize.define('Diseño', {
     primaryKey: true,
     autoIncrement: true,
   },
+  nombre: DataTypes.STRING,
   descripcion: DataTypes.TEXT,
 },
 {

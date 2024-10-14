@@ -1,10 +1,11 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/database.js');
 
-const Estado = sequelize.define('estado', {
+const Estado = sequelize.define('Estado', {
   id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
   },
   nombre: {
     type: DataTypes.STRING,
@@ -12,11 +13,6 @@ const Estado = sequelize.define('estado', {
   },
   descripcion: {
     type: DataTypes.TEXT,
-  },
-  PRIMARY: {
-    type: DataTypes.STRING,
-    primaryKey: true,
-    autoIncrement: false,
   }
 },
 {

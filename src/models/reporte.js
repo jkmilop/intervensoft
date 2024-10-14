@@ -7,10 +7,6 @@ const Reporte = sequelize.define('Reporte', {
     primaryKey: true,
     autoIncrement: true,
   },
-  nombre: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   descripcion: {
     type: DataTypes.TEXT,
   },
@@ -26,10 +22,13 @@ const Reporte = sequelize.define('Reporte', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  id_actividades_estructura: {
+  id_resultado: {
     type: DataTypes.INTEGER,
     allowNull: false,
-  }
+  },
+
+  fecha: DataTypes.DATE,
+
 },
 {
   sequelize,

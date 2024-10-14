@@ -10,7 +10,7 @@ const Conjunto = sequelize.define('Conjunto', {
   nombre: DataTypes.STRING,
   id_residente_encargado: DataTypes.INTEGER,
   id_proyecto: DataTypes.INTEGER,
-  id_vivienda: DataTypes.INTEGER,
+  id_tipo_vivienda: DataTypes.INTEGER,
 },
 {
   sequelize,

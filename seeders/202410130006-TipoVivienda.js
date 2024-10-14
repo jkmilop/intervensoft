@@ -5,34 +5,64 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('TipoVivienda', [
   {
-    "nombre": "Apartamentos tipo VIS"
+    "nombre": ""
   },
   {
-    "nombre": "Casas Campestres de 1 Piso"
+    "nombre": ""
   },
   {
-    "nombre": "Casas Campestres de 2 Piso"
+    "nombre": ""
   },
   {
-    "nombre": "Casas de Interés Social"
+    "nombre": ""
   },
   {
-    "nombre": "Casas de 3 Pisos"
+    "nombre": ""
   },
   {
-    "nombre": "Departamentos"
+    "nombre": ""
   },
   {
-    "nombre": "Duplex"
+    "nombre": ""
   },
   {
-    "nombre": "Viviendas adosadas"
+    "nombre": ""
   },
   {
-    "nombre": "Condominios"
+    "nombre": ""
   },
   {
-    "nombre": "Departamentos de lujo"
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
+  },
+  {
+    "nombre": ""
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

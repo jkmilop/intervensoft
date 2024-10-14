@@ -9,14 +9,14 @@ const {
 
 const addEstado = addRecord(Estado);
 const getEstado = getRecord(Estado);
-const getTiposEstructura = getRecords(Estado);
+const getEstados = getRecords(Estado);
 const updateEstado = updateRecord(Estado);
 const deleteEstado = deleteRecord(Estado);
 
 module.exports = {
   addEstado,
   getEstado,
-  getTiposEstructura,
+  getEstados,
   updateEstado,
   deleteEstado,
 };

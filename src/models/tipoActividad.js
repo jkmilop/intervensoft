@@ -7,7 +7,7 @@ const TipoActividad = sequelize.define('TipoActividad', {
     primaryKey: true,
     autoIncrement: true
   },
-  actividad: {
+  nombre: {
     type: DataTypes.STRING,
     allowNull: false
   }

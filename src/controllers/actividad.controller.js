@@ -1,6 +1,7 @@
 const Actividad = require('../models/actividad.js');
 const Etapa = require('../models/etapa.js');
 const TipoActividad = require('../models/tipoActividad.js');
+const Seccion = require('../models/seccion.js');
 const handleError = require('../utils/errorHandler.js');
 
 const {
@@ -14,11 +15,13 @@ const {
 const addActividad = addRecord(Actividad);
 const getActividad = getRecordWithAssociations(Actividad, [
   { model: Etapa, attributes: ['nombre'], as: 'etapa' },
-  { model: TipoActividad, attributes: ['actividad'], as: 'tipo_actividad' },
+  { model: TipoActividad, attributes: ['nombre'], as: 'tipo_actividad' },
+  { model: Seccion, attributes: ['nombre'], as: 'seccion' },
 ]);
 const getActividades = getRecordsWithAssociations(Actividad, [
   { model: Etapa, attributes: ['nombre'], as: 'etapa' },
-  { model: TipoActividad, attributes: ['actividad'], as: 'tipo_actividad' },
+  { model: TipoActividad, attributes: ['nombre'], as: 'tipo_actividad' },
+  { model: Seccion, attributes: ['nombre'], as: 'seccion' },
 ]);
 const updateActividad = updateRecord(Actividad);
 const deleteActividad = deleteRecord(Actividad);

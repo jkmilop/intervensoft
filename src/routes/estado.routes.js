@@ -5,7 +5,7 @@ const {
   updateEstado,
   deleteEstado,
   getEstado,
-} = require("../controllers/etapa.controller.js");
+} = require("../controllers/estado.controller.js");
 
 const router = Router();
 

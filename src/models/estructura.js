@@ -11,7 +11,12 @@ const Estructura = sequelize.define('Estructura', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  id_tipo_casa: {
+  id_diseño: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+
+  id_tipo_estructura: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
