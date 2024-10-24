@@ -7,7 +7,8 @@ const ActividadesEstructura = require('../models/actividadesEstructura.js');
 const CTActividadesEstructura = require('../models/ctactividadesEstructura.js');
 const Estado = require('../models/estado.js');
 const Diseño = require('../models/diseño.js');
-
+const Reporte = require('../models/reporte.js');
+const Actividad = require('../models/actividad.js');
 // Importaciones de controladores y utilidades
 const handleError = require('../utils/errorHandler.js');
 
@@ -39,6 +40,7 @@ const updateEstructura = updateRecord(Estructura);
 const deleteEstructura = deleteRecord(Estructura);
 
 // Función para calcular porcentajes de actividades en diferentes estados
+
 const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
   try {
     // Obtener la estructura y su tipo
@@ -105,8 +107,7 @@ const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
     throw error;
   }
 };
-
-// Función para obtener el estado de la estructura
+// Función para calcular porcentajes de actividades en diferentes estados
 const getEstadoEstructura = async (req, res) => {
   try {
     const { idEstructura } = req.params;
@@ -192,30 +193,179 @@ const generarEstructuraYActividadesEstructura = async (req, res) => {
     // 4. Crear actividades correspondientes en ActividadesEstructura con id_estado = 1 usando el método del modelo directamente
     // Utilizamos Promise.all para crear todas las actividades en paralelo
     const actividadesCreadas = await Promise.all(actividadesRequeridas.map(async (actividadRequerida) => {
+      // Crear el reporte vacío
+      const nuevoReporte = await Reporte.create({
+        descripcion: "", // Reporte con descripción vacía
+      });
+
       // Aquí puedes personalizar la descripción si es necesario
-      // Por ejemplo, remover el prefijo 'ct_' de la descripción
       const descripcionActividad = actividadRequerida.descripcion.replace(/^ct_/, 'actividades_');
 
+      // Crear la actividad y asociar el reporte creado
       return await ActividadesEstructura.create({
         id_estructura: nuevaEstructura.id,
         id_actividad: actividadRequerida.id_actividad,
         descripcion: descripcionActividad, // Ajusta según tu lógica de negocio
-        id_estado: 1 // Estado "Por Iniciar"
+        id_estado: 1, // Estado "Por Iniciar"
+        id_reporte: nuevoReporte.id // Asociar el reporte a la actividad
       });
     }));
 
-    console.log(`Estructura y actividades generadas correctamente para el tipo de estructura: ${tipoEstructura.nombre}`);
+    console.log(`Estructura, actividades y reportes generados correctamente para el tipo de estructura: ${tipoEstructura.nombre}`);
+    
+    // Devolver la nueva estructura, actividades creadas y el primer reporte como ejemplo
     return res.status(201).json({
       estructura: nuevaEstructura,
-      actividades_estructura: actividadesCreadas
+      actividades_estructura: actividadesCreadas,
+      reporte: actividadesCreadas.map(act => ({
+        id: act.id_reporte,
+        descripcion: ""
+      }))
     }); // Retornar la nueva estructura y las actividades creadas
 
   } catch (error) {
-    console.error('Error al generar estructura y actividades:', error);
+    console.error('Error al generar estructura, actividades y reportes:', error);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+// Nueva función para obtener actividades por estructura clasificadas por estado
+// Función para obtener las actividades clasificadas por estado de una estructura
+// Nueva función para obtener actividades vinculadas a una estructura y organizarlas por estado
+const getActividadesPorEstructura = async (req, res) => {
+  try {
+    const { id } = req.params; // Obtener el ID de la estructura de los parámetros de la URL
+
+    // 1. Verificar que la estructura existe
+    const estructura = await Estructura.findByPk(id);
+    if (!estructura) {
+      return res.status(404).json({ error: 'Estructura no encontrada' });
+    }
+
+    // 2. Obtener todas las actividades vinculadas a la estructura de la tabla ActividadesEstructura
+    const actividadesEstructura = await ActividadesEstructura.findAll({
+      where: { id_estructura: id }
+    });
+
+    if (actividadesEstructura.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron actividades para esta estructura' });
+    }
+
+    // 3. Obtener detalles de las actividades de la tabla Actividad
+    const actividadIds = actividadesEstructura.map(ae => ae.id_actividad);
+    const actividades = await Actividad.findAll({
+      where: {
+        id: actividadIds
+      },
+      include: ['etapa', 'tipo_actividad', 'seccion'] // Incluir asociaciones necesarias
+    });
+
+    // 4. Organizar actividades por estado
+    const actividadesPorIniciar = [];
+    const actividadesIniciadas = [];
+    const actividadesCompletadas = [];
+
+    actividadesEstructura.forEach(actividadEstructura => {
+      // Encontrar la actividad correspondiente en la tabla Actividad
+      const actividad = actividades.find(a => a.id === actividadEstructura.id_actividad);
+
+      const actividadDetalles = {
+        nombre: actividad.nombre,
+        etapa: actividad.etapa.nombre,
+        tipo_actividad: actividad.tipo_actividad.nombre,
+        seccion: actividad.seccion.nombre
+      };
+
+      // Clasificar según el id_estado de ActividadesEstructura
+      switch (actividadEstructura.id_estado) {
+        case 1: // Por Iniciar
+          actividadesPorIniciar.push(actividadDetalles);
+          break;
+        case 2: // Iniciadas
+          actividadesIniciadas.push(actividadDetalles);
+          break;
+        case 3: // Completadas
+          actividadesCompletadas.push(actividadDetalles);
+          break;
+        default:
+          break;
+      }
+    });
+
+    // 5. Retornar la respuesta con las actividades clasificadas por estado
+    return res.status(200).json({
+      actividades_estructura: {
+        actividades_por_iniciar: actividadesPorIniciar,
+        actividades_iniciadas: actividadesIniciadas,
+        actividades_completadas: actividadesCompletadas
+      }
+    });
+
+  } catch (error) {
+    console.error('Error al obtener actividades por estructura:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+const getPorcentajesEstructuras = async (req, res) => {
+  try {
+    // Obtener todas las estructuras con id_estado = 2
+    const estructuras = await Estructura.findAll({
+      where: { id_estado: 2 }
+    });
+
+    if (!estructuras || estructuras.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron estructuras con id_estado = 2' });
+    }
+
+    // Calcular porcentajes para cada estructura
+    const porcentajes = await Promise.all(estructuras.map(async (estructura) => {
+      // Suponiendo que getPorcentajeEstructura es una función existente que calcula el porcentaje de una estructura
+      const porcentaje = await calcularPorcentajeEstructura(estructura.id);
+      return {
+        id_estructura: estructura.id,
+        porcentaje
+      };
+    }));
+
+    return res.status(200).json({ porcentajes });
+  } catch (error) {
+    console.error('Error al obtener porcentajes de estructuras:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+const getActividadesPorEstructuras = async (req, res) => {
+  try {
+      // Realizamos la consulta uniendo las tablas relacionadas
+      const actividadesEstructuras = await Estructura.findAll({
+          attributes: ['id', 'nombre'],
+          include: ['conjunto','diseño']
+      });
+
+      // Formateamos la respuesta para ajustarse a lo solicitado
+      const formattedResponse = actividadesEstructuras.map(estructura => ({
+          id_estructura: estructura.id,
+          nombre: estructura.nombre,
+          conjunto: estructura.conjunto ? estructura.conjunto.nombre : null,
+          diseño: estructura.Diseño ? estructura.diseño.nombre : null,
+          actividades: estructura.Actividades.map(actividad => ({
+              id_actividad: actividad.id,
+              nombre: actividad.nombre
+          }))
+      }));
+
+      // Devolvemos la respuesta en el formato deseado
+      res.json({
+          actividadesEstructuras: formattedResponse
+      });
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({
+          message: `Error al obtener las actividades por estructuras: ${error.message}`
+      });
+  }
+};
 // Exportación de métodos
 module.exports = {
   addEstructura,
@@ -225,5 +375,8 @@ module.exports = {
   deleteEstructura,
   getEstadoEstructura,
   getPorcentajeEstructura,
-  generarEstructuraYActividadesEstructura
+  generarEstructuraYActividadesEstructura,
+  getActividadesPorEstructura,
+  getPorcentajesEstructuras,
+  getActividadesPorEstructuras  
 };

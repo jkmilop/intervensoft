@@ -52,7 +52,7 @@ Rol.hasMany(Persona, { foreignKey: 'id_rol' });
 // Conjunto associations
 Conjunto.belongsTo(Persona, { foreignKey: 'id_residente_encargado', as: 'residente_encargado' });
 Conjunto.belongsTo(Proyecto, { foreignKey: 'id_proyecto', as: 'proyecto' });
-Conjunto.belongsTo(TipoVivienda, { foreignKey: 'id_tipo_vivienda', as: 'tipoVivienda' });
+Conjunto.belongsTo(TipoVivienda, { foreignKey: 'id_tipo_vivienda', as: 'tipo_vivienda' });
 Persona.hasMany(Conjunto, { foreignKey: 'id_residente_encargado' });
 Proyecto.hasMany(Conjunto, { foreignKey: 'id_proyecto' });
 TipoVivienda.hasMany(Conjunto, { foreignKey: 'id_tipo_vivienda' });
