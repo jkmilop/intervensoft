@@ -5,19 +5,19 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Actividad', [
   {
-    "nombre": "",
+    "nombre": "Actividad 1",
     "id_etapa": "1",
     "id_tipo_actividad": "1",
     "id_seccion": "1"
   },
   {
-    "nombre": "",
+    "nombre": "Actividad 2",
     "id_etapa": "2",
     "id_tipo_actividad": "2",
     "id_seccion": "2"
   },
   {
-    "nombre": "",
+    "nombre": "Actividad 3",
     "id_etapa": "3",
     "id_tipo_actividad": "3",
     "id_seccion": "3"

@@ -8,201 +8,31 @@ module.exports = {
         "id_conjunto": "1",
         "id_diseño": "1",
         "id_tipo_estructura": "1",
-        "nombre": "",
+        "nombre": "Casa 1",
         "id_estado": "1",
 
         "descripcion": "estructura_descripcion_1",
         "id_ubicacion_estructura": "1",
       },
       {
-        "id_conjunto": "2",
+        "id_conjunto": "1",
         "id_diseño": "2",
-        "id_tipo_estructura": "2",
-        "nombre": "",
+        "id_tipo_estructura": "1",
+        "nombre": "Casa 2",
         "id_estado": "2",
 
         "descripcion": "estructura_descripcion_2",
-        "id_ubicacion_estructura": "2",
+        "id_ubicacion_estructura": "1",
       },
       {
-        "id_conjunto": "3",
+        "id_conjunto": "1",
         "id_diseño": "3",
-        "id_tipo_estructura": "3",
-        "nombre": "",
+        "id_tipo_estructura": "1",
+        "nombre": "Casa 3",
         "id_estado": "2",
 
         "descripcion": "estructura_descripcion_3",
-        "id_ubicacion_estructura": "3",
-      },
-      {
-        "id_conjunto": "4",
-        "id_diseño": "4",
-        "id_tipo_estructura": "4",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_4",
         "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "5",
-        "id_diseño": "5",
-        "id_tipo_estructura": "5",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_5",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "6",
-        "id_diseño": "6",
-        "id_tipo_estructura": "6",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_6",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "7",
-        "id_tipo_estructura": "7",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_7",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "8",
-        "id_tipo_estructura": "8",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_8",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "9",
-        "id_tipo_estructura": "9",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_9",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "10",
-        "id_tipo_estructura": "10",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_10",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "11",
-        "id_tipo_estructura": "11",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_11",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "12",
-        "id_tipo_estructura": "12",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_12",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "13",
-        "id_tipo_estructura": "13",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_13",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "14",
-        "id_tipo_estructura": "14",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_14",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "15",
-        "id_tipo_estructura": "15",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_15",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "16",
-        "id_tipo_estructura": "16",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_16",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "17",
-        "id_tipo_estructura": "17",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_17",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "18",
-        "id_tipo_estructura": "18",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_18",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "1",
-        "id_diseño": "19",
-        "id_tipo_estructura": "19",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_19",
-        "id_ubicacion_estructura": "1",
-      },
-      {
-        "id_conjunto": "2",
-        "id_diseño": "20",
-        "id_tipo_estructura": "20",
-        "nombre": "",
-        "id_estado": "2",
-
-        "descripcion": "estructura_descripcion_20",
-        "id_ubicacion_estructura": "2",
       }
     ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

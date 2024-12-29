@@ -9,6 +9,9 @@ const Estado = require('../models/estado.js');
 const Diseño = require('../models/diseño.js');
 const Reporte = require('../models/reporte.js');
 const Actividad = require('../models/actividad.js');
+const Persona = require('../models/persona.js');
+const Resultado = require('../models/resultado.js');
+
 // Importaciones de controladores y utilidades
 const handleError = require('../utils/errorHandler.js');
 
@@ -19,7 +22,6 @@ const {
   updateRecord,
   deleteRecord,
 } = require('./crudController.js');
-
 // Definición de métodos CRUD para Estructura
 const addEstructura = addRecord(Estructura);
 const getEstructura = getRecordWithAssociations(Estructura, [
@@ -41,6 +43,17 @@ const deleteEstructura = deleteRecord(Estructura);
 
 // Función para calcular porcentajes de actividades en diferentes estados
 
+const getPorcentajeEstructura = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const porcentaje = await calcularPorcentajeActividadesCompletadas(id);
+    res.json({ porcentaje });
+  } catch (error) {
+    console.error('Error al calcular el porcentaje de la estructura:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
   try {
     // Obtener la estructura y su tipo
@@ -61,7 +74,7 @@ const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
     const actividadesCompletadas = await ActividadesEstructura.findAll({
       where: {
         id_estructura: idEstructura,
-        id_estado: 3 // Asumiendo que 3 es el ID del estado 'Completado'
+        id_estado: 3 // Estado 'Completado'
       }
     });
 
@@ -72,156 +85,94 @@ const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
       }
     });
 
-    const actividadesPorIniciar = await ActividadesEstructura.findAll({
-      where: {
-        id_estructura: idEstructura,
-        id_estado: 1 // Estado 'Por Iniciar'
-      }
-    });
-
-    // Calcular porcentajes
+    // Calcular porcentajes (sin contar las actividades con id_estado: 1)
     const totalRequeridas = actividadesRequeridas.length;
     const totalCompletadas = actividadesCompletadas.length;
     const totalIniciadas = actividadesIniciadas.length;
-    const totalPorIniciar = actividadesPorIniciar.length;
 
     if (totalRequeridas === 0) {
       return {
         porcentaje_actividades_completadas: 0,
-        porcentaje_actividades_iniciadas: 0,
-        porcentaje_por_iniciar: 0
+        porcentaje_actividades_iniciadas: 0
       }; // Evitar división por cero
     }
 
     const porcentaje_actividades_completadas = (totalCompletadas / totalRequeridas) * 100;
     const porcentaje_actividades_iniciadas = (totalIniciadas / totalRequeridas) * 100;
-    const porcentaje_por_iniciar = (totalPorIniciar / totalRequeridas) * 100;
 
     return {
       porcentaje_actividades_completadas: Math.round(porcentaje_actividades_completadas), // Redondear al entero más cercano
-      porcentaje_actividades_iniciadas: Math.round(porcentaje_actividades_iniciadas),
-      porcentaje_por_iniciar: Math.round(porcentaje_por_iniciar)
+      porcentaje_actividades_iniciadas: Math.round(porcentaje_actividades_iniciadas)
     };
   } catch (error) {
     console.error('Error al calcular los porcentajes de actividades:', error);
     throw error;
   }
 };
-// Función para calcular porcentajes de actividades en diferentes estados
-const getEstadoEstructura = async (req, res) => {
-  try {
-    const { idEstructura } = req.params;
-
-    const {
-      porcentaje_actividades_completadas,
-      porcentaje_actividades_iniciadas,
-      porcentaje_por_iniciar
-    } = await calcularPorcentajeActividadesCompletadas(idEstructura);
-
-    // Obtener el estado actual de la estructura
-    const estructura = await Estructura.findByPk(idEstructura);
-    const estadoActual = estructura.id_estado;
-
-    let mensaje = "";
-    if (porcentaje_actividades_completadas === 100 && estadoActual === 5) { // Asumiendo que 5 es el ID del estado 'Culminado'
-      mensaje = "La estructura está culminada.";
-    } else if (porcentaje_actividades_completadas === 100) {
-      mensaje = "Todas las actividades están completas, pero el estado de la estructura no se ha actualizado a 'Culminado'.";
-    } else {
-      mensaje = `La estructura está al ${porcentaje_actividades_completadas}% completada, con ${porcentaje_actividades_iniciadas}% de actividades iniciadas y ${porcentaje_por_iniciar}% por iniciar.`;
-    }
-
-    res.json({
-      porcentaje_actividades_completadas,
-      porcentaje_actividades_iniciadas,
-      porcentaje_por_iniciar,
-      estadoActual,
-      mensaje
-    });
-
-  } catch (error) {
-    console.error('Error al obtener el estado de la estructura:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
-
-// Nuevo manejador para la ruta de porcentaje
-const getPorcentajeEstructura = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const porcentaje = await calcularPorcentajeActividadesCompletadas(id);
-    res.json({ porcentaje });
-  } catch (error) {
-    console.error('Error al calcular el porcentaje de la estructura:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
 
 // Función modificada para generar una estructura y sus actividades asociadas
 const generarEstructuraYActividadesEstructura = async (req, res) => {
   try {
-    // Obtener idTipoEstructura de req.params
-    const { id } = req.params; // Ejemplo: /estructura/1/generar
+    const { id } = req.params;
+    const estructuraId = parseInt(id, 10);
 
-    // Validar que id es un número
-    const idTipoEstructura = parseInt(id, 10);
-    if (isNaN(idTipoEstructura)) {
-      return res.status(400).json({ error: 'El id del tipo de estructura no es válido' });
+    if (isNaN(estructuraId)) {
+      return res.status(400).json({ error: 'El id de la estructura no es válido' });
     }
 
-    // 1. Verificar que el TipoEstructura existe usando el método CRUD
-    const tipoEstructura = await TipoEstructura.findByPk(idTipoEstructura);
-    if (!tipoEstructura) {
-      return res.status(404).json({ error: 'Tipo de estructura no encontrado' });
+    // Obtener la estructura existente
+    const estructura = await Estructura.findByPk(estructuraId);
+    if (!estructura) {
+      return res.status(404).json({ error: 'Estructura no encontrada' });
     }
 
-    // 2. Crear una nueva Estructura con id_estado = 1 usando el método del modelo directamente
-    const nuevaEstructura = await Estructura.create({
-      id_tipo_estructura: idTipoEstructura,
-      id_estado: 1 // Estado "Por Iniciar"
-    });
+    // Actualizar el estado de la estructura a 2 ("Por Iniciar")
+    estructura.id_estado = 2;
+    await estructura.save();
 
-    // 3. Obtener las actividades requeridas (CTActividadesEstructura) para este tipo de estructura
+    // Obtener las actividades requeridas para este tipo de estructura
     const actividadesRequeridas = await CTActividadesEstructura.findAll({
-      where: { id_tipo_estructura: idTipoEstructura }
+      where: { id_tipo_estructura: estructura.id_tipo_estructura }
     });
 
     if (actividadesRequeridas.length === 0) {
       return res.status(404).json({ error: 'No se encontraron actividades requeridas para este tipo de estructura' });
     }
 
-    // 4. Crear actividades correspondientes en ActividadesEstructura con id_estado = 1 usando el método del modelo directamente
-    // Utilizamos Promise.all para crear todas las actividades en paralelo
+    // Crear las actividades en ActividadesEstructura
     const actividadesCreadas = await Promise.all(actividadesRequeridas.map(async (actividadRequerida) => {
-      // Crear el reporte vacío
-      const nuevoReporte = await Reporte.create({
-        descripcion: "", // Reporte con descripción vacía
-      });
-
-      // Aquí puedes personalizar la descripción si es necesario
+      const nuevoReporte = await Reporte.create({ descripcion: "" });
       const descripcionActividad = actividadRequerida.descripcion.replace(/^ct_/, 'actividades_');
 
-      // Crear la actividad y asociar el reporte creado
       return await ActividadesEstructura.create({
-        id_estructura: nuevaEstructura.id,
+        id_estructura: estructuraId,
         id_actividad: actividadRequerida.id_actividad,
-        descripcion: descripcionActividad, // Ajusta según tu lógica de negocio
-        id_estado: 1, // Estado "Por Iniciar"
-        id_reporte: nuevoReporte.id // Asociar el reporte a la actividad
+        descripcion: descripcionActividad,
+        id_estado: 1, // Estado inicial "Por Iniciar"
+        id_reporte: nuevoReporte.id
       });
     }));
 
-    console.log(`Estructura, actividades y reportes generados correctamente para el tipo de estructura: ${tipoEstructura.nombre}`);
-    
-    // Devolver la nueva estructura, actividades creadas y el primer reporte como ejemplo
+    // Cambiar el estado de la primera actividad creada a 2
+    if (actividadesCreadas.length > 0) {
+      actividadesCreadas[0].id_estado = 2;
+      await actividadesCreadas[0].save();
+    }
+
+    console.log(`Actividades y reportes generados correctamente para la estructura con ID: ${estructuraId}`);
+
     return res.status(201).json({
-      estructura: nuevaEstructura,
+      estructura,
       actividades_estructura: actividadesCreadas,
+      descripcion: {
+        id: actividadesCreadas[0].id_reporte,
+        descripcion: "primer reporte"
+      },
       reporte: actividadesCreadas.map(act => ({
         id: act.id_reporte,
         descripcion: ""
       }))
-    }); // Retornar la nueva estructura y las actividades creadas
+    });
 
   } catch (error) {
     console.error('Error al generar estructura, actividades y reportes:', error);
@@ -336,47 +287,180 @@ const getPorcentajesEstructuras = async (req, res) => {
 };
 const getActividadesPorEstructuras = async (req, res) => {
   try {
-      // Realizamos la consulta uniendo las tablas relacionadas
-      const actividadesEstructuras = await Estructura.findAll({
-          attributes: ['id', 'nombre'],
-          include: ['conjunto','diseño']
-      });
+    // Realizamos la consulta uniendo las tablas relacionadas
+    const actividadesEstructuras = await Estructura.findAll({
+      attributes: ['id', 'nombre'],
+      include: ['conjunto', 'diseño']
+    });
 
-      // Formateamos la respuesta para ajustarse a lo solicitado
-      const formattedResponse = actividadesEstructuras.map(estructura => ({
-          id_estructura: estructura.id,
-          nombre: estructura.nombre,
-          conjunto: estructura.conjunto ? estructura.conjunto.nombre : null,
-          diseño: estructura.Diseño ? estructura.diseño.nombre : null,
-          actividades: estructura.Actividades.map(actividad => ({
-              id_actividad: actividad.id,
-              nombre: actividad.nombre
-          }))
-      }));
+    // Formateamos la respuesta para ajustarse a lo solicitado
+    const formattedResponse = actividadesEstructuras.map(estructura => ({
+      id_estructura: estructura.id,
+      nombre: estructura.nombre,
+      conjunto: estructura.conjunto ? estructura.conjunto.nombre : null,
+      diseño: estructura.Diseño ? estructura.diseño.nombre : null,
+      actividades: estructura.Actividades.map(actividad => ({
+        id_actividad: actividad.id,
+        nombre: actividad.nombre
+      }))
+    }));
 
-      // Devolvemos la respuesta en el formato deseado
-      res.json({
-          actividadesEstructuras: formattedResponse
-      });
+    // Devolvemos la respuesta en el formato deseado
+    res.json({
+      actividadesEstructuras: formattedResponse
+    });
 
   } catch (error) {
-      console.error(error);
-      res.status(500).json({
-          message: `Error al obtener las actividades por estructuras: ${error.message}`
-      });
+    console.error(error);
+    res.status(500).json({
+      message: `Error al obtener las actividades por estructuras: ${error.message}`
+    });
   }
 };
-// Exportación de métodos
+
+async function mostrarActividadIniciada(req, res) {
+  try {
+    const { id } = req.params;
+    const estructuraId = parseInt(id, 10);
+
+    if (isNaN(estructuraId)) {
+      return res.status(400).json({ error: 'El id de la estructura no es válido' });
+    }
+
+    // Buscar la actividad con el alias correcto en el include
+    const actividad = await ActividadesEstructura.findOne({
+      where: {
+        id_estructura: estructuraId,
+        id_estado: 2,
+      },
+      include: [
+        {
+          model: Estructura,
+          as: 'estructura', // Usa el alias correcto
+          attributes: ['nombre'],
+        },
+        {
+          model: Actividad,
+          as: 'actividad', // Usa el alias correcto
+          attributes: ['nombre'],
+        },
+        {
+          model: Reporte,
+          as: 'reporte', // Usa el alias correcto
+          attributes: ['descripcion'],
+        },
+        {
+          model: Estado,
+          as: 'estado', // Usa el alias correcto
+          attributes: ['nombre'],
+        },
+      ],
+    });
+
+    if (!actividad) {
+      return res.status(404).json({ error: 'No se encontró una actividad iniciada para esta estructura' });
+    }
+
+    // Retornar los campos solicitados
+    res.json({
+      id: actividad.id,
+      descripcion: actividad.descripcion,
+      id_actividad: actividad.id_actividad,
+      id_estructura: actividad.id_estructura,
+      id_estado: actividad.id_estado,
+      id_reporte: actividad.id_reporte,
+      fecha_inicio: actividad.fecha_inicio,
+      estructura: actividad.estructura?.nombre,
+      actividad: actividad.actividad?.nombre,
+      reporte: actividad.reporte?.descripcion,
+      estado: actividad.estado?.nombre,
+    });
+  } catch (error) {
+    console.error('Error al buscar la actividad iniciada:', error);
+    res.status(500).json({ error: 'Error al buscar la actividad iniciada' });
+  }
+}
+
+
+async function getReporte(req, res) {
+  try {
+    const { id } = req.params; // Obtiene el id de ActividadesEstructura desde los parámetros de la solicitud
+    const actividadEstructuraId = parseInt(id, 10);
+
+    if (isNaN(actividadEstructuraId)) {
+      return res.status(400).json({ error: 'El id de ActividadesEstructura no es válido' });
+    }
+
+    // Buscar la ActividadesEstructura para obtener el id_reporte asociado
+    const actividad = await ActividadesEstructura.findByPk(actividadEstructuraId, {
+      attributes: ['id_reporte'],
+    });
+
+    if (!actividad || !actividad.id_reporte) {
+      return res.status(404).json({ error: 'No se encontró el reporte asociado a la ActividadesEstructura' });
+    }
+
+    // Buscar el reporte con el id_reporte obtenido
+    const reporte = await Reporte.findByPk(actividad.id_reporte, {
+      attributes: ['id', 'descripcion', 'id_interventor', 'id_residente', 'id_contratista', 'id_resultado', 'fecha'],
+      include: [
+        {
+          model: Persona,
+          as: 'interventor',
+          attributes: ['nombre'],
+        },
+        {
+          model: Persona,
+          as: 'residente',
+          attributes: ['nombre'],
+        },
+        {
+          model: Persona,
+          as: 'contratista',
+          attributes: ['nombre'],
+        },
+        {
+          model: Resultado,
+          as: 'resultado',
+          attributes: ['nombre'],
+        },
+      ],
+    });
+
+    if (!reporte) {
+      return res.status(404).json({ error: 'No se encontró el reporte con el id proporcionado' });
+    }
+
+    // Retornar los datos del reporte junto con la información adicional
+    res.json({
+      id: reporte.id,
+      descripcion: reporte.descripcion,
+      id_interventor: reporte.id_interventor,
+      interventor_nombre: reporte.interventor?.nombre,
+      id_residente: reporte.id_residente,
+      residente_nombre: reporte.residente?.nombre,
+      id_contratista: reporte.id_contratista,
+      contratista_nombre: reporte.contratista?.nombre,
+      id_resultado: reporte.id_resultado,
+      resultado_nombre: reporte.resultado?.nombre,
+      fecha: reporte.fecha,
+    });
+  } catch (error) {
+    console.error('Error al buscar el reporte:', error);
+    res.status(500).json({ error: 'Error al buscar el reporte' });
+  }
+}
 module.exports = {
   addEstructura,
   getEstructura,
   getEstructuras,
   updateEstructura,
   deleteEstructura,
-  getEstadoEstructura,
-  getPorcentajeEstructura,
   generarEstructuraYActividadesEstructura,
+  getPorcentajeEstructura,
   getActividadesPorEstructura,
   getPorcentajesEstructuras,
-  getActividadesPorEstructuras  
+  getActividadesPorEstructuras,
+  mostrarActividadIniciada,
+  getReporte
 };
