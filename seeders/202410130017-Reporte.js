@@ -9,7 +9,7 @@ module.exports = {
     "id_interventor": "1",
     "id_residente": "1",
     "id_contratista": "1",
-    "id_resultado": "1",
+    "id_resultado": "3",
     "fecha": "2024-10-13"
   },
   {
@@ -25,7 +25,7 @@ module.exports = {
     "id_interventor": "3",
     "id_residente": "3",
     "id_contratista": "3",
-    "id_resultado": "3",
+    "id_resultado": "1",
     "fecha": "2024-10-13"
   },
   {
