@@ -1,16 +1,20 @@
 const { Router } = require("express");
 const {
   addEstructura,
+  getEstructura,
   getEstructuras,
   updateEstructura,
   deleteEstructura,
-  getEstructura,
-  getPorcentajeEstructura,
   generarEstructuraYActividadesEstructura,
+  getPorcentajeEstructura,
   getActividadesPorEstructura,
   getPorcentajesEstructuras,
+  getActividadesPorEstructuras,
+  mostrarActividadIniciada,
   getReporte,
-  mostrarActividadIniciada,  
+  updateActividadEstructura,
+  updateEstadoEstructura,
+  handleUpdateActividadEstructura
 } = require("../controllers/estructura.controller.js");
 
 const router = Router();
@@ -34,5 +38,8 @@ router.get("/reporte/:id", getReporte); // GET /estructura/:id/actividad
 router.get("/porcentaje/:id", getPorcentajeEstructura); // GET /estructura/:id/porcentaje
 router.get("/actividades/:id", getActividadesPorEstructura); // GET /estructura/:id/actividades
 router.post("/generar/:id", generarEstructuraYActividadesEstructura); // POST /estructura/:id/generar
+router.put("/updateActividadEstructura/:id", updateActividadEstructura); // PUT /estructura/:id
+router.put("/updateEstadoEstructura/:id", updateEstadoEstructura); // PUT /estructura/:id
+router.put("/handleUpdateActividadEstructura/:id", handleUpdateActividadEstructura); // PUT /estructura/:id
 
 module.exports = router;
