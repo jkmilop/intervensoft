@@ -11,6 +11,7 @@ const Reporte = require('../models/reporte.js');
 const Actividad = require('../models/actividad.js');
 const Persona = require('../models/persona.js');
 const Resultado = require('../models/resultado.js');
+
 // Importaciones de controladores y utilidades
 const handleError = require('../utils/errorHandler.js');
 const {
@@ -21,7 +22,14 @@ const {
   deleteRecord,
 } = require('./crudController.js');
 
-// Definición de métodos CRUD para Estructura
+// Constantes para los estados de las actividades
+const ESTADO_POR_INICIAR = 1;
+const ESTADO_INICIADA = 2;
+const ESTADO_COMPLETADO = 3;
+
+/**
+ * FUNCIONES CRUD BASICAS
+ */
 const addEstructura = addRecord(Estructura);
 const getEstructura = getRecordWithAssociations(Estructura, [
   { model: Conjunto, attributes: ['nombre'], as: 'conjunto' },
@@ -40,17 +48,20 @@ const getEstructuras = getRecordsWithAssociations(Estructura, [
 const updateEstructura = updateRecord(Estructura);
 const deleteEstructura = deleteRecord(Estructura);
 
-// Función para obtener actividades estructuras por ID de reporte
+/**
+ * Obtiene la actividad asociada a un reporte.
+ * @param {number} idReporte - ID del reporte.
+ * @returns {Promise<object>} La actividad encontrada.
+ * @throws {Error} Si no se encuentra la actividad.
+ */
 const getActividadesEstructura = async (idReporte) => {
   try {
     const actividadEstructura = await ActividadesEstructura.findOne({
       where: { id_reporte: idReporte }
     });
-    
     if (!actividadEstructura) {
       throw new Error(`No se encontró ActividadesEstructura con id_reporte: ${idReporte}`);
     }
-    
     return actividadEstructura;
   } catch (error) {
     console.error(`Error al obtener ActividadesEstructura con id_reporte ${idReporte}:`, error);
@@ -58,96 +69,122 @@ const getActividadesEstructura = async (idReporte) => {
   }
 };
 
-// Función para actualizar el estado de una estructura
-const updateEstadoEstructura = async (idEstructura) => {
+/**
+ * Función auxiliar para obtener un reporte válido a partir de un ID o un objeto Reporte.
+ * @param {number|object} input - El ID del reporte o el objeto Reporte.
+ * @returns {Promise<{idReporte: number, reporte: object}>}
+ * @throws {Error} Si el parámetro es inválido o no se encuentra el reporte.
+ */
+const obtenerReporteValido = async (input) => {
+  let idReporte;
+  let reporte;
+  if (typeof input === 'number') {
+    idReporte = input;
+    reporte = await Reporte.findByPk(idReporte);
+    if (!reporte) throw new Error(`No se encontró el Reporte con id: ${idReporte}`);
+  } else if (typeof input === 'object' && input !== null) {
+    reporte = input;
+    idReporte = reporte.id;
+  } else {
+    throw new Error('Parámetro inválido: se esperaba un ID o un objeto Reporte');
+  }
+  return { idReporte, reporte };
+};
+
+/**
+ * Función auxiliar para obtener la siguiente actividad basado en el ID del reporte.
+ * @param {number} idReporte 
+ * @returns {Promise<object|null>} Retorna la siguiente actividad o null si no existe.
+ */
+const getNextActividad = async (idReporte) => {
   try {
-    const estructura = await Estructura.findByPk(idEstructura);
-    
-    if (!estructura) {
-      throw new Error(`No se encontró la Estructura con id: ${idEstructura}`);
-    }
-    
-    // Actualizar estado a 3 (Completado)
-    estructura.id_estado = 3;
-    await estructura.save();
-    
-    console.log(`Estructura ID ${idEstructura} actualizada a estado 3 (Completado)`);
-    return estructura;
+    return await getActividadesEstructura(idReporte + 1);
   } catch (error) {
-    console.error(`Error al actualizar el estado de la Estructura ${idEstructura}:`, error);
-    throw error;
+    // Si no se encuentra la siguiente actividad se retorna null
+    return null;
   }
 };
 
-// Función principal para actualizar actividad estructura basada en reporte
+/**
+ * Actualiza la actividad de una estructura basada en el reporte.
+ * Si el reporte tiene id_resultado igual a ESTADO_COMPLETADO, se actualiza la actividad actual a completada y
+ * se intenta iniciar la siguiente actividad.
+ * @param {number|object} idReporteOrReporte - Puede ser un ID numérico o un objeto Reporte.
+ * @returns {Promise<boolean>} Retorna true si se realizó alguna actualización, false en caso contrario.
+ */
 const updateActividadEstructura = async (idReporteOrReporte) => {
   try {
-    let idReporte;
-    let reporte;
+    const { idReporte, reporte } = await obtenerReporteValido(idReporteOrReporte);
+    if (reporte.id_resultado !== ESTADO_COMPLETADO) {
+      return false;
+    }
+    const actividadActual = await getActividadesEstructura(idReporte);
     
-    // Determinar si se recibió un ID o un objeto Reporte
-    if (typeof idReporteOrReporte === 'number') {
-      idReporte = idReporteOrReporte;
-      // Obtener el reporte
-      reporte = await Reporte.findByPk(idReporte);
-      if (!reporte) {
-        throw new Error(`No se encontró el Reporte con id: ${idReporte}`);
-      }
-    } else if (typeof idReporteOrReporte === 'object') {
-      reporte = idReporteOrReporte;
-      idReporte = reporte.id;
+    const siguienteActividad = await getNextActividad(idReporte);
+    if (siguienteActividad) {
+      siguienteActividad.id_estado = ESTADO_INICIADA;
+      await siguienteActividad.save();
+      console.log(`Siguiente actividad (Reporte ID ${idReporte + 1}) actualizada a estado Iniciada`);
     } else {
-      throw new Error('Parámetro inválido: se esperaba un ID o un objeto Reporte');
+      console.log(`No se encontró siguiente actividad para el reporte ID ${idReporte + 1}. Se podría verificar la completitud total de actividades.`);
+      // Aquí se podría agregar lógica adicional para verificar el estado global de la estructura
     }
     
-    // Verificar si el reporte tiene id_resultado igual a 3
-    if (reporte.id_resultado === 3) {
-      // Obtener la actividad estructura actual
-      const actividadActual = await getActividadesEstructura(idReporte);
-      
-      // Verificar si existe una siguiente actividad (idReporte + 1)
-      try {
-        const siguienteActividad = await getActividadesEstructura(idReporte + 1);
-        
-        // Actualizar la siguiente actividad a estado 2 (Iniciada)
-        siguienteActividad.id_estado = 2;
-        await siguienteActividad.save();
-        console.log(`Siguiente actividad (Reporte ID ${idReporte + 1}) actualizada a estado 2 (Iniciada)`);
-      } catch (error) {
-        // Si no hay siguiente actividad, verificar si todas las actividades están completadas
-        console.log(`No se encontró siguiente actividad para el reporte ID ${idReporte + 1}, verificando si todas están completadas`);
-        
-        // Obtener todas las actividades de esta estructura
-        const todasLasActividades = await ActividadesEstructura.findAll({
-          where: { id_estructura: actividadActual.id_estructura }
-        });
-        
-        // Verificar si todas tienen id_estado = 3 (Completado)
-        const todasCompletadas = todasLasActividades.every(actividad => actividad.id_estado === 3);
-        
-        if (todasCompletadas) {
-          // Actualizar el estado de la estructura
-          await updateEstadoEstructura(actividadActual.id_estructura);
-          console.log(`Todas las actividades están completadas. Estructura ${actividadActual.id_estructura} marcada como completada.`);
-        }
-      }
-      
-      // Actualizar la actividad actual a estado 3 (Completado)
-      actividadActual.id_estado = 3;
-      await actividadActual.save();
-      console.log(`Actividad actual (Reporte ID ${idReporte}) actualizada a estado 3 (Completado)`);
-      
-      return true;
-    }
-    
-    return false;
+    actividadActual.id_estado = ESTADO_COMPLETADO;
+    await actividadActual.save();
+    console.log(`Actividad actual (Reporte ID ${idReporte}) actualizada a estado Completado`);
+
+    return true;
   } catch (error) {
     console.error('Error en updateActividadEstructura:', error);
     throw error;
   }
 };
 
-// Función para calcular porcentajes de actividades en diferentes estados
+/**
+ * Calcula el porcentaje de actividades completadas e iniciadas para una estructura.
+ * Se basa en el total de actividades requeridas según el tipo de estructura.
+ * @param {number} idEstructura - ID de la estructura.
+ * @returns {Promise<{porcentaje_actividades_completadas: number, porcentaje_actividades_iniciadas: number}>}
+ */
+const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
+  try {
+    const estructura = await Estructura.findByPk(idEstructura, {
+      include: [{ model: TipoEstructura, as: 'tipo_estructura' }]
+    });
+    if (!estructura) {
+      throw new Error('Estructura no encontrada');
+    }
+    const actividadesRequeridas = await CTActividadesEstructura.findAll({
+      where: { id_tipo_estructura: estructura.id_tipo_estructura }
+    });
+    const actividadesCompletadas = await ActividadesEstructura.findAll({
+      where: { id_estructura: idEstructura, id_estado: ESTADO_COMPLETADO }
+    });
+    const actividadesIniciadas = await ActividadesEstructura.findAll({
+      where: { id_estructura: idEstructura, id_estado: ESTADO_INICIADA }
+    });
+    const totalRequeridas = actividadesRequeridas.length;
+    const totalCompletadas = actividadesCompletadas.length;
+    const totalIniciadas = actividadesIniciadas.length;
+    if (totalRequeridas === 0) {
+      return { porcentaje_actividades_completadas: 0, porcentaje_actividades_iniciadas: 0 };
+    }
+    return {
+      porcentaje_actividades_completadas: Math.round((totalCompletadas / totalRequeridas) * 100),
+      porcentaje_actividades_iniciadas: Math.round((totalIniciadas / totalRequeridas) * 100)
+    };
+  } catch (error) {
+    console.error('Error al calcular los porcentajes de actividades:', error);
+    throw error;
+  }
+};
+
+/**
+ * Endpoint para calcular el porcentaje de actividades completadas e iniciadas de una estructura.
+ * @param {object} req - Request de Express.
+ * @param {object} res - Response de Express.
+ */
 const getPorcentajeEstructura = async (req, res) => {
   try {
     const { id } = req.params;
@@ -159,55 +196,163 @@ const getPorcentajeEstructura = async (req, res) => {
   }
 };
 
-const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
+/**
+ * Calcula el porcentaje de actividades para un conjunto.
+ * Recorre todas las estructuras asociadas al conjunto y acumula los totales de actividades.
+ * @param {number} idConjunto - ID del conjunto.
+ * @returns {Promise<{porcentaje_actividades_completadas: number, porcentaje_actividades_iniciadas: number}>}
+ */
+const calcularPorcentajeConjunto = async (idConjunto) => {
   try {
-    // Obtener la estructura y su tipo
-    const estructura = await Estructura.findByPk(idEstructura, {
-      include: [{ model: TipoEstructura, as: 'tipo_estructura' }]
+    const estructuras = await Estructura.findAll({
+      where: { id_conjunto: idConjunto }
     });
-    if (!estructura) {
-      throw new Error('Estructura no encontrada');
+    if (!estructuras.length) {
+      throw new Error('No se encontraron estructuras para este conjunto');
     }
-    // Obtener todas las actividades requeridas para este tipo de estructura
-    const actividadesRequeridas = await CTActividadesEstructura.findAll({
-      where: { id_tipo_estructura: estructura.id_tipo_estructura }
-    });
-    // Obtener actividades en diferentes estados
-    const actividadesCompletadas = await ActividadesEstructura.findAll({
-      where: {
-        id_estructura: idEstructura,
-        id_estado: 3 // Estado 'Completado'
-      }
-    });
-    const actividadesIniciadas = await ActividadesEstructura.findAll({
-      where: {
-        id_estructura: idEstructura,
-        id_estado: 2 // Estado 'Iniciada'
-      }
-    });
-    // Calcular porcentajes (sin contar las actividades con id_estado: 1)
-    const totalRequeridas = actividadesRequeridas.length;
-    const totalCompletadas = actividadesCompletadas.length;
-    const totalIniciadas = actividadesIniciadas.length;
-    if (totalRequeridas === 0) {
-      return {
-        porcentaje_actividades_completadas: 0,
-        porcentaje_actividades_iniciadas: 0
-      }; // Evitar división por cero
+    let totalRequeridas = 0;
+    let totalCompletadas = 0;
+    let totalIniciadas = 0;
+    
+    // Para cada estructura se acumulan los totales
+    for (const estructura of estructuras) {
+      const actividadesRequeridas = await CTActividadesEstructura.findAll({
+        where: { id_tipo_estructura: estructura.id_tipo_estructura }
+      });
+      totalRequeridas += actividadesRequeridas.length;
+      
+      const actividadesCompletadas = await ActividadesEstructura.findAll({
+        where: { id_estructura: estructura.id, id_estado: ESTADO_COMPLETADO }
+      });
+      totalCompletadas += actividadesCompletadas.length;
+      
+      const actividadesIniciadas = await ActividadesEstructura.findAll({
+        where: { id_estructura: estructura.id, id_estado: ESTADO_INICIADA }
+      });
+      totalIniciadas += actividadesIniciadas.length;
     }
-    const porcentaje_actividades_completadas = (totalCompletadas / totalRequeridas) * 100;
-    const porcentaje_actividades_iniciadas = (totalIniciadas / totalRequeridas) * 100;
+    
     return {
-      porcentaje_actividades_completadas: Math.round(porcentaje_actividades_completadas), // Redondear al entero más cercano
-      porcentaje_actividades_iniciadas: Math.round(porcentaje_actividades_iniciadas)
+      porcentaje_actividades_completadas: totalRequeridas ? Math.round((totalCompletadas / totalRequeridas) * 100) : 0,
+      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0
     };
   } catch (error) {
-    console.error('Error al calcular los porcentajes de actividades:', error);
+    console.error('Error al calcular porcentajes para el conjunto:', error);
     throw error;
   }
 };
 
-// Función modificada para generar una estructura y sus actividades asociadas
+/**
+ * Calcula el porcentaje de actividades para un proyecto.
+ * Se asume que el modelo Conjunto tiene una propiedad id_proyecto para relacionarlo con el proyecto.
+ * Para cada conjunto del proyecto, se acumulan los totales de actividades de sus estructuras.
+ * @param {number} idProyecto - ID del proyecto.
+ * @returns {Promise<{porcentaje_actividades_completadas: number, porcentaje_actividades_iniciadas: number}>}
+ */
+const calcularPorcentajeProyecto = async (idProyecto) => {
+  try {
+    // Obtener todos los conjuntos que pertenezcan al proyecto
+    const conjuntos = await Conjunto.findAll({
+      where: { id_proyecto: idProyecto }
+    });
+    if (!conjuntos.length) {
+      throw new Error('No se encontraron conjuntos para este proyecto');
+    }
+    
+    let totalRequeridas = 0;
+    let totalCompletadas = 0;
+    let totalIniciadas = 0;
+    
+    // Para cada conjunto se recorren sus estructuras y se acumulan los totales
+    for (const conjunto of conjuntos) {
+      const estructuras = await Estructura.findAll({
+        where: { id_conjunto: conjunto.id }
+      });
+      for (const estructura of estructuras) {
+        const actividadesRequeridas = await CTActividadesEstructura.findAll({
+          where: { id_tipo_estructura: estructura.id_tipo_estructura }
+        });
+        totalRequeridas += actividadesRequeridas.length;
+        
+        const actividadesCompletadas = await ActividadesEstructura.findAll({
+          where: { id_estructura: estructura.id, id_estado: ESTADO_COMPLETADO }
+        });
+        totalCompletadas += actividadesCompletadas.length;
+        
+        const actividadesIniciadas = await ActividadesEstructura.findAll({
+          where: { id_estructura: estructura.id, id_estado: ESTADO_INICIADA }
+        });
+        totalIniciadas += actividadesIniciadas.length;
+      }
+    }
+    
+    return {
+      porcentaje_actividades_completadas: totalRequeridas ? Math.round((totalCompletadas / totalRequeridas) * 100) : 0,
+      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0
+    };
+  } catch (error) {
+    console.error('Error al calcular porcentajes para el proyecto:', error);
+    throw error;
+  }
+};
+
+/**
+ * Endpoint para obtener el porcentaje de actividades de un conjunto.
+ * @param {object} req - Request de Express.
+ * @param {object} res - Response de Express.
+ */
+const getPorcentajeConjunto = async (req, res) => {
+  try {
+    const { id } = req.params; // id del conjunto
+    // Consultar todas las estructuras asociadas al conjunto
+    const estructuras = await Estructura.findAll({ where: { id_conjunto: id } });
+    
+    if (!estructuras || estructuras.length === 0) {
+      return res.json({ porcentaje: 0 });
+    }
+    
+    // Filtrar las estructuras con id_estado === 3 (completadas)
+    const estructurasCompletadas = estructuras.filter(estructura => estructura.id_estado === 3);
+    
+    const porcentaje = await calcularPorcentajeProyecto(id);
+    res.json({ porcentaje: porcentaje.porcentaje_actividades_completadas });    
+  } catch (error) {
+    console.error('Error al calcular el porcentaje para el conjunto:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+/**
+ * Endpoint para obtener el porcentaje de actividades de un proyecto.
+ * Ahora muestra el porcentaje de estructuras con id_estado=3.
+ * @param {object} req - Request de Express.
+ * @param {object} res - Response de Express.
+ */
+const getPorcentajeProyecto = async (req, res) => {
+  try {
+    const { id } = req.params; // id del proyecto
+    // Consultar todos los conjuntos asociados al proyecto
+    const conjuntos = await Conjunto.findAll({ where: { id_proyecto: id } });
+    
+    if (!conjuntos || conjuntos.length === 0) {
+      return res.json({ porcentaje: 0 });
+    }
+    
+    // Filtrar aquellos conjuntos con id_estado === 3 (completados)
+    const conjuntosCompletados = conjuntos.filter(conjunto => conjunto.id_estado === 3);
+    
+    const porcentaje = await calcularPorcentajeProyecto(id);    
+    res.json({ porcentaje: porcentaje.porcentaje_actividades_completadas });  } catch (error) {
+    console.error('Error al calcular el porcentaje para el proyecto:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+/**
+ * Genera una estructura y sus actividades asociadas.
+ * Actualiza el estado de la estructura a "Por Iniciar", crea un reporte por cada actividad requerida
+ * y activa la primera actividad generada.
+ * @param {object} req - Request de Express.
+ * @param {object} res - Response de Express.
+ */
 const generarEstructuraYActividadesEstructura = async (req, res) => {
   try {
     const { id } = req.params;
@@ -215,22 +360,20 @@ const generarEstructuraYActividadesEstructura = async (req, res) => {
     if (isNaN(estructuraId)) {
       return res.status(400).json({ error: 'El id de la estructura no es válido' });
     }
-    // Obtener la estructura existente
     const estructura = await Estructura.findByPk(estructuraId);
     if (!estructura) {
       return res.status(404).json({ error: 'Estructura no encontrada' });
     }
-    // Actualizar el estado de la estructura a 2 ("Por Iniciar")
-    estructura.id_estado = 2;
+    // Actualizar el estado de la estructura a "Por Iniciar"
+    estructura.id_estado = ESTADO_POR_INICIAR + 1; // Suponiendo que el estado 2 representa "Por Iniciar"
     await estructura.save();
-    // Obtener las actividades requeridas para este tipo de estructura
     const actividadesRequeridas = await CTActividadesEstructura.findAll({
       where: { id_tipo_estructura: estructura.id_tipo_estructura }
     });
     if (actividadesRequeridas.length === 0) {
       return res.status(404).json({ error: 'No se encontraron actividades requeridas para este tipo de estructura' });
     }
-    // Crear las actividades en ActividadesEstructura
+    // Crear reportes y actividades
     const actividadesCreadas = await Promise.all(actividadesRequeridas.map(async (actividadRequerida) => {
       const nuevoReporte = await Reporte.create({ descripcion: "" });
       const descripcionActividad = actividadRequerida.descripcion.replace(/^ct_/, 'actividades_');
@@ -238,13 +381,13 @@ const generarEstructuraYActividadesEstructura = async (req, res) => {
         id_estructura: estructuraId,
         id_actividad: actividadRequerida.id_actividad,
         descripcion: descripcionActividad,
-        id_estado: 1, // Estado inicial "Por Iniciar"
+        id_estado: ESTADO_POR_INICIAR, // Estado inicial "Por Iniciar"
         id_reporte: nuevoReporte.id
       });
     }));
-    // Cambiar el estado de la primera actividad creada a 2
+    // Iniciar la primera actividad creada
     if (actividadesCreadas.length > 0) {
-      actividadesCreadas[0].id_estado = 2;
+      actividadesCreadas[0].id_estado = ESTADO_INICIADA;
       await actividadesCreadas[0].save();
     }
     console.log(`Actividades y reportes generados correctamente para la estructura con ID: ${estructuraId}`);
@@ -266,263 +409,19 @@ const generarEstructuraYActividadesEstructura = async (req, res) => {
   }
 };
 
-// Nueva función para obtener actividades por estructura clasificadas por estado
-// Función para obtener las actividades clasificadas por estado de una estructura
-// Nueva función para obtener actividades vinculadas a una estructura y organizarlas por estado
-const getActividadesPorEstructura = async (req, res) => {
-  try {
-    const { id } = req.params; // Obtener el ID de la estructura de los parámetros de la URL
-    // 1. Verificar que la estructura existe
-    const estructura = await Estructura.findByPk(id);
-    if (!estructura) {
-      return res.status(404).json({ error: 'Estructura no encontrada' });
-    }
-    // 2. Obtener todas las actividades vinculadas a la estructura de la tabla ActividadesEstructura
-    const actividadesEstructura = await ActividadesEstructura.findAll({
-      where: { id_estructura: id }
-    });
-    if (actividadesEstructura.length === 0) {
-      return res.status(404).json({ error: 'No se encontraron actividades para esta estructura' });
-    }
-    // 3. Obtener detalles de las actividades de la tabla Actividad
-    const actividadIds = actividadesEstructura.map(ae => ae.id_actividad);
-    const actividades = await Actividad.findAll({
-      where: {
-        id: actividadIds
-      },
-      include: ['etapa', 'tipo_actividad', 'seccion'] // Incluir asociaciones necesarias
-    });
-    // 4. Organizar actividades por estado
-    const actividadesPorIniciar = [];
-    const actividadesIniciadas = [];
-    const actividadesCompletadas = [];
-    actividadesEstructura.forEach(actividadEstructura => {
-      // Encontrar la actividad correspondiente en la tabla Actividad
-      const actividad = actividades.find(a => a.id === actividadEstructura.id_actividad);
-      const actividadDetalles = {
-        nombre: actividad.nombre,
-        etapa: actividad.etapa.nombre,
-        tipo_actividad: actividad.tipo_actividad.nombre,
-        seccion: actividad.seccion.nombre
-      };
-      // Clasificar según el id_estado de ActividadesEstructura
-      switch (actividadEstructura.id_estado) {
-        case 1: // Por Iniciar
-          actividadesPorIniciar.push(actividadDetalles);
-          break;
-        case 2: // Iniciadas
-          actividadesIniciadas.push(actividadDetalles);
-          break;
-        case 3: // Completadas
-          actividadesCompletadas.push(actividadDetalles);
-          break;
-        default:
-          break;
-      }
-    });
-    // 5. Retornar la respuesta con las actividades clasificadas por estado
-    return res.status(200).json({
-      actividades_estructura: {
-        actividades_por_iniciar: actividadesPorIniciar,
-        actividades_iniciadas: actividadesIniciadas,
-        actividades_completadas: actividadesCompletadas
-      }
-    });
-  } catch (error) {
-    console.error('Error al obtener actividades por estructura:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
-
-const getPorcentajesEstructuras = async (req, res) => {
-  try {
-    // Obtener todas las estructuras con id_estado = 2
-    const estructuras = await Estructura.findAll({
-      where: { id_estado: 2 }
-    });
-    if (!estructuras || estructuras.length === 0) {
-      return res.status(404).json({ error: 'No se encontraron estructuras con id_estado = 2' });
-    }
-    // Calcular porcentajes para cada estructura
-    const porcentajes = await Promise.all(estructuras.map(async (estructura) => {
-      // Suponiendo que getPorcentajeEstructura es una función existente que calcula el porcentaje de una estructura
-      const porcentaje = await calcularPorcentajeEstructura(estructura.id);
-      return {
-        id_estructura: estructura.id,
-        porcentaje
-      };
-    }));
-    return res.status(200).json({ porcentajes });
-  } catch (error) {
-    console.error('Error al obtener porcentajes de estructuras:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
-
-const getActividadesPorEstructuras = async (req, res) => {
-  try {
-    // Realizamos la consulta uniendo las tablas relacionadas
-    const actividadesEstructuras = await Estructura.findAll({
-      attributes: ['id', 'nombre'],
-      include: ['conjunto', 'diseño']
-    });
-    // Formateamos la respuesta para ajustarse a lo solicitado
-    const formattedResponse = actividadesEstructuras.map(estructura => ({
-      id_estructura: estructura.id,
-      nombre: estructura.nombre,
-      conjunto: estructura.conjunto ? estructura.conjunto.nombre : null,
-      diseño: estructura.Diseño ? estructura.diseño.nombre : null,
-      actividades: estructura.Actividades.map(actividad => ({
-        id_actividad: actividad.id,
-        nombre: actividad.nombre
-      }))
-    }));
-    // Devolvemos la respuesta en el formato deseado
-    res.json({
-      actividadesEstructuras: formattedResponse
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: `Error al obtener las actividades por estructuras: ${error.message}`
-    });
-  }
-};
-
-async function mostrarActividadIniciada(req, res) {
-  try {
-    const { id } = req.params;
-    const estructuraId = parseInt(id, 10);
-    if (isNaN(estructuraId)) {
-      return res.status(400).json({ error: 'El id de la estructura no es válido' });
-    }
-    // Buscar la actividad con el alias correcto en el include
-    const actividad = await ActividadesEstructura.findOne({
-      where: {
-        id_estructura: estructuraId,
-        id_estado: 2,
-      },
-      include: [
-        {
-          model: Estructura,
-          as: 'estructura', // Usa el alias correcto
-          attributes: ['nombre'],
-        },
-        {
-          model: Actividad,
-          as: 'actividad', // Usa el alias correcto
-          attributes: ['nombre'],
-        },
-        {
-          model: Reporte,
-          as: 'reporte', // Usa el alias correcto
-          attributes: ['descripcion'],
-        },
-        {
-          model: Estado,
-          as: 'estado', // Usa el alias correcto
-          attributes: ['nombre'],
-        },
-      ],
-    });
-    if (!actividad) {
-      return res.status(404).json({ error: 'No se encontró una actividad iniciada para esta estructura' });
-    }
-    // Retornar los campos solicitados
-    res.json({
-      id: actividad.id,
-      descripcion: actividad.descripcion,
-      id_actividad: actividad.id_actividad,
-      id_estructura: actividad.id_estructura,
-      id_estado: actividad.id_estado,
-      id_reporte: actividad.id_reporte,
-      fecha_inicio: actividad.fecha_inicio,
-      estructura: actividad.estructura?.nombre,
-      actividad: actividad.actividad?.nombre,
-      reporte: actividad.reporte?.descripcion,
-      estado: actividad.estado?.nombre,
-    });
-  } catch (error) {
-    console.error('Error al buscar la actividad iniciada:', error);
-    res.status(500).json({ error: 'Error al buscar la actividad iniciada' });
-  }
-}
-
-async function getReporte(req, res) {
-  try {
-    const { id } = req.params; // Obtiene el id de ActividadesEstructura desde los parámetros de la solicitud
-    const actividadEstructuraId = parseInt(id, 10);
-    if (isNaN(actividadEstructuraId)) {
-      return res.status(400).json({ error: 'El id de ActividadesEstructura no es válido' });
-    }
-    // Buscar la ActividadesEstructura para obtener el id_reporte asociado
-    const actividad = await ActividadesEstructura.findByPk(actividadEstructuraId, {
-      attributes: ['id_reporte'],
-    });
-    if (!actividad || !actividad.id_reporte) {
-      return res.status(404).json({ error: 'No se encontró el reporte asociado a la ActividadesEstructura' });
-    }
-    // Buscar el reporte con el id_reporte obtenido
-    const reporte = await Reporte.findByPk(actividad.id_reporte, {
-      attributes: ['id', 'descripcion', 'id_interventor', 'id_residente', 'id_contratista', 'id_resultado', 'fecha'],
-      include: [
-        {
-          model: Persona,
-          as: 'interventor',
-          attributes: ['nombre'],
-        },
-        {
-          model: Persona,
-          as: 'residente',
-          attributes: ['nombre'],
-        },
-        {
-          model: Persona,
-          as: 'contratista',
-          attributes: ['nombre'],
-        },
-        {
-          model: Resultado,
-          as: 'resultado',
-          attributes: ['nombre'],
-        },
-      ],
-    });
-    if (!reporte) {
-      return res.status(404).json({ error: 'No se encontró el reporte con el id proporcionado' });
-    }
-    // Retornar los datos del reporte junto con la información adicional
-    res.json({
-      id: reporte.id,
-      descripcion: reporte.descripcion,
-      id_interventor: reporte.id_interventor,
-      interventor_nombre: reporte.interventor?.nombre,
-      id_residente: reporte.id_residente,
-      residente_nombre: reporte.residente?.nombre,
-      id_contratista: reporte.id_contratista,
-      contratista_nombre: reporte.contratista?.nombre,
-      id_resultado: reporte.id_resultado,
-      resultado_nombre: reporte.resultado?.nombre,
-      fecha: reporte.fecha,
-    });
-  } catch (error) {
-    console.error('Error al buscar el reporte:', error);
-    res.status(500).json({ error: 'Error al buscar el reporte' });
-  }
-}
-
-// Endpoint para actualizar una actividad estructura basada en un reporte
+/**
+ * Actualiza la actividad de una estructura basado en un reporte.
+ * @param {object} req - Request de Express.
+ * @param {object} res - Response de Express.
+ */
 const handleUpdateActividadEstructura = async (req, res) => {
   try {
-    const { id } = req.params; // Id del reporte
+    const { id } = req.params; // id del reporte
     const idReporte = parseInt(id, 10);
-    
     if (isNaN(idReporte)) {
       return res.status(400).json({ error: 'El id del reporte no es válido' });
     }
-    
     const resultado = await updateActividadEstructura(idReporte);
-    
     return res.status(200).json({ 
       success: true, 
       message: resultado 
@@ -543,12 +442,7 @@ module.exports = {
   deleteEstructura,
   generarEstructuraYActividadesEstructura,
   getPorcentajeEstructura,
-  getActividadesPorEstructura,
-  getPorcentajesEstructuras,
-  getActividadesPorEstructuras,
-  mostrarActividadIniciada,
-  getReporte,
-  updateActividadEstructura,
-  updateEstadoEstructura,
-  handleUpdateActividadEstructura
+  getPorcentajeConjunto,
+  getPorcentajeProyecto,
+  handleUpdateActividadEstructura,
 };

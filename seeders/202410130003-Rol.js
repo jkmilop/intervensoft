@@ -5,7 +5,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Rol', [
   {
-    "nombre": "Supervisor",
+    "nombre": "Contratista",
     "descripcion": ""
   },
   {
@@ -13,7 +13,7 @@ module.exports = {
     "descripcion": ""
   },
   {
-    "nombre": "Coordinador",
+    "nombre": "Residente",
     "descripcion": ""
   },
   {

@@ -9,6 +9,8 @@ const Reporte = sequelize.define('Reporte', {
   },
   descripcion: {
     type: DataTypes.TEXT,
+    allowNull: true,
+
   },
   id_interventor: {
     type: DataTypes.INTEGER,

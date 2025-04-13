@@ -8,22 +8,10 @@ module.exports = {
     "nombre": "Cali"
   },
   {
-    "nombre": "Palmira"
-  },
-  {
-    "nombre": "Buga"
+    "nombre": "Jamundi"
   },
   {
     "nombre": "Yumbo"
-  },
-  {
-    "nombre": "Buenaventura"
-  },
-  {
-    "nombre": "Rozo"
-  },
-  {
-    "nombre": "Cartago"
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

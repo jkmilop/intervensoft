@@ -53,6 +53,8 @@ Rol.hasMany(Persona, { foreignKey: 'id_rol' });
 Conjunto.belongsTo(Persona, { foreignKey: 'id_residente_encargado', as: 'residente_encargado' });
 Conjunto.belongsTo(Proyecto, { foreignKey: 'id_proyecto', as: 'proyecto' });
 Conjunto.belongsTo(TipoVivienda, { foreignKey: 'id_tipo_vivienda', as: 'tipo_vivienda' });
+Conjunto.belongsTo(Estado, { foreignKey: 'id_estado', as: 'estado' });
+Estado.hasMany(Conjunto, { foreignKey: 'id_estado' });
 Persona.hasMany(Conjunto, { foreignKey: 'id_residente_encargado' });
 Proyecto.hasMany(Conjunto, { foreignKey: 'id_proyecto' });
 TipoVivienda.hasMany(Conjunto, { foreignKey: 'id_tipo_vivienda' });
@@ -60,6 +62,8 @@ TipoVivienda.hasMany(Conjunto, { foreignKey: 'id_tipo_vivienda' });
 // Proyecto associations
 Proyecto.belongsTo(Ciudad, { foreignKey: 'id_ciudad', as: 'ciudad' });
 Ciudad.hasMany(Proyecto, { foreignKey: 'id_ciudad' });
+Proyecto.belongsTo(Estado, { foreignKey: 'id_estado', as: 'estado' });
+Estado.hasMany(Proyecto, { foreignKey: 'id_estado' });
 
 // Estructura associations
 Estructura.belongsTo(Conjunto, { foreignKey: 'id_conjunto', as: 'conjunto' });

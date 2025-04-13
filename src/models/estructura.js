@@ -30,10 +30,6 @@ const Estructura = sequelize.define('Estructura', {
   },
   descripcion: {
     type: DataTypes.TEXT,
-  },
-  id_ubicacion_estructura: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
   }
 },
 {

@@ -32,7 +32,7 @@ module.exports = {
     "nombre": "Condominios"
   },
   {
-    "nombre": "Departamentos de lujo"
+    "nombre": "Departamento de lujo"
   }
 ], {
       ignoreDuplicates: true  // Add this option to avoid inserting duplicate records

@@ -5,83 +5,83 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('Diseño', [
   {
-    "descripcion": "diseno_descripcion_1",
+    "descripcion": "Diseño 1",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_2",
+    "descripcion": "Diseño 2",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_3",
+    "descripcion": "Diseño 3",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_4",
+    "descripcion": "Diseño 4",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_5",
+    "descripcion": "Diseño 5",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_6",
+    "descripcion": "Diseño 6",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_7",
+    "descripcion": "Diseño 7",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_8",
+    "descripcion": "Diseño 8",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_9",
+    "descripcion": "Diseño 9",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_10",
+    "descripcion": "Diseño 10",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_11",
+    "descripcion": "Diseño 11",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_12",
+    "descripcion": "Diseño 12",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_13",
+    "descripcion": "Diseño 13",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_14",
+    "descripcion": "Diseño 14",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_15",
+    "descripcion": "Diseño 15",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_16",
+    "descripcion": "Diseño 16",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_17",
+    "descripcion": "Diseño 17",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_18",
+    "descripcion": "Diseño 18",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_19",
+    "descripcion": "Diseño 19",
     "nombre": ""
   },
   {
-    "descripcion": "diseno_descripcion_20",
+    "descripcion": "Diseño 20",
     "nombre": ""
   }
 ], {
