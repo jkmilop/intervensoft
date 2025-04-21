@@ -2,3 +2,4 @@
 /package-lock.json
 /src/database/database.js
 src/database/database.js
+config/config.json

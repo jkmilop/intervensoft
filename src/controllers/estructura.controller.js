@@ -155,24 +155,20 @@ const calcularPorcentajeActividadesCompletadas = async (idEstructura) => {
     if (!estructura) {
       throw new Error('Estructura no encontrada');
     }
-    const actividadesRequeridas = await CTActividadesEstructura.findAll({
-      where: { id_tipo_estructura: estructura.id_tipo_estructura }
-    });
-    const actividadesCompletadas = await ActividadesEstructura.findAll({
-      where: { id_estructura: idEstructura, id_estado: ESTADO_COMPLETADO }
-    });
-    const actividadesIniciadas = await ActividadesEstructura.findAll({
-      where: { id_estructura: idEstructura, id_estado: ESTADO_INICIADA }
-    });
+
+    const [actividadesRequeridas, actividadesCompletadas, actividadesIniciadas] = await Promise.all([
+      CTActividadesEstructura.findAll({ where: { id_tipo_estructura: estructura.id_tipo_estructura } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: idEstructura, id_estado: ESTADO_COMPLETADO } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: idEstructura, id_estado: ESTADO_INICIADA } }),
+    ]);
+
     const totalRequeridas = actividadesRequeridas.length;
     const totalCompletadas = actividadesCompletadas.length;
     const totalIniciadas = actividadesIniciadas.length;
-    if (totalRequeridas === 0) {
-      return { porcentaje_actividades_completadas: 0, porcentaje_actividades_iniciadas: 0 };
-    }
+
     return {
-      porcentaje_actividades_completadas: Math.round((totalCompletadas / totalRequeridas) * 100),
-      porcentaje_actividades_iniciadas: Math.round((totalIniciadas / totalRequeridas) * 100)
+      porcentaje_actividades_completadas: totalRequeridas ? Math.round((totalCompletadas / totalRequeridas) * 100) : 0,
+      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0,
     };
   } catch (error) {
     console.error('Error al calcular los porcentajes de actividades:', error);
@@ -204,37 +200,27 @@ const getPorcentajeEstructura = async (req, res) => {
  */
 const calcularPorcentajeConjunto = async (idConjunto) => {
   try {
-    const estructuras = await Estructura.findAll({
-      where: { id_conjunto: idConjunto }
-    });
+    const estructuras = await Estructura.findAll({ where: { id_conjunto: idConjunto } });
     if (!estructuras.length) {
       throw new Error('No se encontraron estructuras para este conjunto');
     }
-    let totalRequeridas = 0;
-    let totalCompletadas = 0;
-    let totalIniciadas = 0;
-    
-    // Para cada estructura se acumulan los totales
-    for (const estructura of estructuras) {
-      const actividadesRequeridas = await CTActividadesEstructura.findAll({
-        where: { id_tipo_estructura: estructura.id_tipo_estructura }
-      });
-      totalRequeridas += actividadesRequeridas.length;
-      
-      const actividadesCompletadas = await ActividadesEstructura.findAll({
-        where: { id_estructura: estructura.id, id_estado: ESTADO_COMPLETADO }
-      });
-      totalCompletadas += actividadesCompletadas.length;
-      
-      const actividadesIniciadas = await ActividadesEstructura.findAll({
-        where: { id_estructura: estructura.id, id_estado: ESTADO_INICIADA }
-      });
-      totalIniciadas += actividadesIniciadas.length;
-    }
-    
+
+    const estructuraIds = estructuras.map(e => e.id);
+    const tipoIds = estructuras.map(e => e.id_tipo_estructura);
+
+    const [actividadesRequeridas, actividadesCompletadas, actividadesIniciadas] = await Promise.all([
+      CTActividadesEstructura.findAll({ where: { id_tipo_estructura: tipoIds } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: estructuraIds, id_estado: ESTADO_COMPLETADO } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: estructuraIds, id_estado: ESTADO_INICIADA } }),
+    ]);
+
+    const totalRequeridas = actividadesRequeridas.length;
+    const totalCompletadas = actividadesCompletadas.length;
+    const totalIniciadas = actividadesIniciadas.length;
+
     return {
       porcentaje_actividades_completadas: totalRequeridas ? Math.round((totalCompletadas / totalRequeridas) * 100) : 0,
-      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0
+      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0,
     };
   } catch (error) {
     console.error('Error al calcular porcentajes para el conjunto:', error);
@@ -251,44 +237,34 @@ const calcularPorcentajeConjunto = async (idConjunto) => {
  */
 const calcularPorcentajeProyecto = async (idProyecto) => {
   try {
-    // Obtener todos los conjuntos que pertenezcan al proyecto
-    const conjuntos = await Conjunto.findAll({
-      where: { id_proyecto: idProyecto }
-    });
+    const conjuntos = await Conjunto.findAll({ where: { id_proyecto: idProyecto } });
     if (!conjuntos.length) {
       throw new Error('No se encontraron conjuntos para este proyecto');
     }
-    
-    let totalRequeridas = 0;
-    let totalCompletadas = 0;
-    let totalIniciadas = 0;
-    
-    // Para cada conjunto se recorren sus estructuras y se acumulan los totales
-    for (const conjunto of conjuntos) {
-      const estructuras = await Estructura.findAll({
-        where: { id_conjunto: conjunto.id }
-      });
-      for (const estructura of estructuras) {
-        const actividadesRequeridas = await CTActividadesEstructura.findAll({
-          where: { id_tipo_estructura: estructura.id_tipo_estructura }
-        });
-        totalRequeridas += actividadesRequeridas.length;
-        
-        const actividadesCompletadas = await ActividadesEstructura.findAll({
-          where: { id_estructura: estructura.id, id_estado: ESTADO_COMPLETADO }
-        });
-        totalCompletadas += actividadesCompletadas.length;
-        
-        const actividadesIniciadas = await ActividadesEstructura.findAll({
-          where: { id_estructura: estructura.id, id_estado: ESTADO_INICIADA }
-        });
-        totalIniciadas += actividadesIniciadas.length;
-      }
+
+    const conjuntoIds = conjuntos.map(c => c.id);
+
+    const estructuras = await Estructura.findAll({ where: { id_conjunto: conjuntoIds } });
+    if (!estructuras.length) {
+      throw new Error('No se encontraron estructuras para los conjuntos del proyecto');
     }
-    
+
+    const estructuraIds = estructuras.map(e => e.id);
+    const tipoIds = estructuras.map(e => e.id_tipo_estructura);
+
+    const [actividadesRequeridas, actividadesCompletadas, actividadesIniciadas] = await Promise.all([
+      CTActividadesEstructura.findAll({ where: { id_tipo_estructura: tipoIds } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: estructuraIds, id_estado: ESTADO_COMPLETADO } }),
+      ActividadesEstructura.findAll({ where: { id_estructura: estructuraIds, id_estado: ESTADO_INICIADA } }),
+    ]);
+
+    const totalRequeridas = actividadesRequeridas.length;
+    const totalCompletadas = actividadesCompletadas.length;
+    const totalIniciadas = actividadesIniciadas.length;
+
     return {
       porcentaje_actividades_completadas: totalRequeridas ? Math.round((totalCompletadas / totalRequeridas) * 100) : 0,
-      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0
+      porcentaje_actividades_iniciadas: totalRequeridas ? Math.round((totalIniciadas / totalRequeridas) * 100) : 0,
     };
   } catch (error) {
     console.error('Error al calcular porcentajes para el proyecto:', error);
