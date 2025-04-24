@@ -27,8 +27,12 @@ const tipoEstructuraRoutes = require('./routes/tipoEstructura.routes.js');
 const tipoViviendaRoutes = require('./routes/tipoVivienda.routes.js');
 const ubicacionEstructuraRoutes = require('./routes/ubicacionEstructura.routes.js');
 const usuarioRoutes = require('./routes/usuario.routes.js');
-
-app.use(cors());
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
 app.use(express.json());
 app.use('/actividad', actividadRoutes);
 app.use('/actividades-estructura', actividadesEstructuraRoutes);
@@ -39,7 +43,7 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/diseño', diseñoRoutes);
 app.use('/empresa', empresaRoutes);
 app.use('/etapa', etapaRoutes);
-app.use('/estado', estadoRoutes); 
+app.use('/estado', estadoRoutes);
 app.use('/estructura', estructuraRoutes);
 app.use('/persona', personaRoutes);
 app.use('/proyecto', proyectoRoutes);

@@ -22,10 +22,11 @@ const Usuario = sequelize.define('Usuario', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  rol: {
-    type: DataTypes.ENUM('Interventor' , 'Administrador'),
+  id_rol: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
+
 },
 {
   sequelize,
